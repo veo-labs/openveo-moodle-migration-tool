@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('/home/lhawsa/Documents/projects/moodle/moodle/config.php');
+require('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use tool_openveo_migration\output\settings_page;
