@@ -15,7 +15,7 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the migration settings form.
+ * Defines the settings form to configure migration.
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use moodleform;
 
 /**
- * Defines the migration settings form.
+ * Defines the Moodle settings form to configure migration.
  *
  * Settings form configures how migration should operate.
  *
@@ -53,12 +53,14 @@ class settings_form extends moodleform {
 
         // Types of videos to migrate.
         // Client side validation is not working for filetypes fields...
+        // Groups "html_video" and "web_video" have to be added as without it Moodle validation does not work...
         $this->_form->addElement(
                 'filetypes',
                 'videotypestomigrate',
                 get_string('settingsvideotypestomigratelabel', 'tool_openveo_migration'),
-                array('onlytypes' => ['html_video'])
+                array('onlytypes' => ['video', 'html_video', 'web_video'])
         );
+        $this->_form->setType('videotypestomigrate', PARAM_RAW_TRIMMED);
         $this->_form->addHelpButton('videotypestomigrate', 'settingsvideotypestomigrate', 'tool_openveo_migration');
         $this->_form->addRule('videotypestomigrate', null, 'required', null, 'server');
         if (!empty($this->_customdata['videotypestomigrate'])) {
@@ -122,6 +124,23 @@ class settings_form extends moodleform {
         );
         if (!empty($this->_customdata['statuspollingfrequency'])) {
             $this->_form->setDefault('statuspollingfrequency', $this->_customdata['statuspollingfrequency']);
+        }
+
+        // File fields.
+        $this->_form->addElement(
+                'textarea',
+                'filefields',
+                get_string('settingsfilefieldslabel', 'tool_openveo_migration'),
+                'rows="20" cols="80" style="white-space: nowrap;"'
+        );
+        $this->_form->setType('filefields', PARAM_RAW_TRIMMED);
+        $this->_form->addHelpButton(
+                'filefields',
+                'settingsfilefields',
+                'tool_openveo_migration'
+        );
+        if (!empty($this->_customdata['filefields'])) {
+            $this->_form->setDefault('filefields', $this->_customdata['filefields']);
         }
 
         $this->add_action_buttons(false, get_string('settingssubmitlabel', 'tool_openveo_migration'));

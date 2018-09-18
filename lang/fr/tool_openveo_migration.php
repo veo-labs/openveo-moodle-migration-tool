@@ -50,11 +50,44 @@ $string['settingsstatuspollingfrequencylabel'] = 'Fréquence de récupération d
 $string['settingsstatuspollingfrequency'] = 'Fréquence de récupération du statut (en secondes)';
 $string['settingsstatuspollingfrequency_help'] = 'Lors de la migration d\'une vidéo Moodle vers OpenVeo, OpenVeo Migration Tool s\'informe régulièrement de l\'état de la vidéo auprès d\'OpenVeo jusqu\'à ce qu\'elle soit complétement traitée. La fréquence par défaut est de 10.';
 $string['settingsstatuspollingfrequencyformaterror'] = 'Fréquence invalide (ex : 10).';
+$string['settingsfilefieldslabel'] = 'Champs d\'ajout de fichiers';
+$string['settingsfilefields'] = 'Champs d\'ajout de fichiers';
+$string['settingsfilefields_help'] = 'La liste des champs de formulaire de type "editor" et "filemanager" permettant d\'ajouter des fichiers. Si une réfèrence vers une vidéo OpenVeo est ajoutée à partir d\'un champ de formulaire sans que le champ ne soit défini ici, OpenVeo Migration Tool ne migrera pas la vidéo. Chaque ligne représente un champ avec trois colonnes : le composant propriétaire du champ (component), la zone du fichier (filearea) et les méthodes supportées (supportedmethods). Les colonnes sont séparées par des barres verticales (pipe). Plus d\'informations disponibles sur <a href="https://github.com/veo-labs/openveo-moodle-migration-tool" target="_blank">la page du plugin</a>. L\'ordre des lignes est également important puisqu\'il détermine l\'ordre de la migration automatique. Les vidéos correspondant au premier champ (première ligne) seront migrées avant les vidéos correspondant au deuxième champ (seconde ligne) et ainsi de suite.';
 $string['settingssubmitlabel'] = 'Enregistrer les modifications';
 
 // Errors
 $string['errorlocalpluginnotconfigured'] = 'Le plugin local "OpenVeo API" n\'est pas configuré.';
 $string['errornovideoplatform'] = 'Aucune platforme vidéos de configurée sur OpenVeo Publish.';
+$string['errormigrationwrongconfiguration'] = 'La migration nécessite au moins un type de vidéos et une platforme de destination.';
+$string['errornorepositoryopenveo'] = 'Aucun dépôt OpenVeo trouvé.';
 
 // Events
 $string['eventgettingplatformsfailed'] = 'Récupération des plateformes vidéos echouée';
+$string['eventvideomigrationstarted'] = 'Migration vidéo démarrée';
+$string['eventvideomigrationended'] = 'Migration vidéo terminée';
+$string['eventvideomigrationfailed'] = 'Migration vidéo échouée';
+$string['eventvideotransitionstarted'] = 'Transition vidéo démarrée';
+$string['eventvideotransitionended'] = 'Transition vidéo terminée';
+$string['eventvideotransitionfailed'] = 'Transition vidéo échouée';
+$string['eventgettingregisteredvideofailed'] = 'Récupération vidéo planifiée échouée';
+$string['eventgettingvideofailed'] = 'Récupération vidéo échouée';
+$string['eventplanningvideofailed'] = 'Planification vidéo échouée';
+$string['eventupdatingvideomigrationstatusfailed'] = 'Modification migration statut vidéo échouée';
+$string['eventsendingvideofailed'] = 'Envoi vidéo échoué';
+$string['eventwaitingforopenveovideofailed'] = 'Attente vidéo OpenVeo échouée';
+$string['eventremovingopenveovideofailed'] = 'Suppression vidéo OpenVeo échouée';
+$string['eventgettingopenveovideofailed'] = 'Récupération vidéo OpenVeo échouée';
+$string['eventpublishingopenveovideofailed'] = 'Publication vidéo OpenVeo échouée';
+$string['eventcreatingreferencefailed'] = 'Création référence vidéo échouée';
+$string['eventverifyingvideofailed'] = 'Vérification vidéo échouée';
+$string['eventremovingreferencesfailed'] = 'Suppression références video échouée';
+$string['eventremovingoriginalfailed'] = 'Suppression vidéo originale échouée';
+$string['eventremovingoriginalaliasesfailed'] = 'Suppression alias vidéo originale échouée';
+$string['eventremovingdraftfilesfailed'] = 'Suppression fichiers brouillons échouée';
+$string['eventconnectingtoopenveofailed'] = 'Connexion à OpenVeo échouée';
+$string['eventrestoringoriginalfailed'] = 'Récupération vidéo originale échouée';
+$string['eventrestoringoriginalaliasesfailed'] = 'Récupération alias vidéo originale échouée';
+$string['eventupdatingregisteredvideoidfailed'] = 'Modification id vidéo planifiée échouée';
+
+// Tasks
+$string['taskmigratename'] = 'Migrer les vidéos Moodle vers OpenVeo';

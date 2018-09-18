@@ -15,7 +15,7 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines plugin version and requirements.
+ * Defines plugin scheduled tasks.
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -24,12 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_openveo_migration';
-$plugin->version = 2018090400;
-$plugin->requires = 2017111300;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.0';
-$plugin->dependencies = array(
-    'local_openveo_api' => 2018073100,
-    'repository_openveo' => 2018073100
+// Migration task.
+$tasks = array(
+    array(
+        'classname' => 'tool_openveo_migration\task\migrate',
+        'blocking' => 0,
+        'minute' => '0', // At the first minute of the hour
+        'hour' => '0', // At midnight
+        'day' => '*', // Every day of month
+        'month' => '*', // Every month
+        'dayofweek' => '*' // Every day of week
+    )
 );

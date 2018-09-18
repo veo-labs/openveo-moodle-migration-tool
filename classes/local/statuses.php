@@ -15,21 +15,52 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines plugin version and requirements.
+ * Defines planned video statuses.
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_openveo_migration\local;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_openveo_migration';
-$plugin->version = 2018090400;
-$plugin->requires = 2017111300;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.0';
-$plugin->dependencies = array(
-    'local_openveo_api' => 2018073100,
-    'repository_openveo' => 2018073100
-);
+/**
+ * Defines the list of statuses which could be applied to a planned video.
+ *
+ * @package tool_openveo_migration
+ * @copyright 2018 Veo-labs
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+interface statuses {
+
+    /**
+     * Video migration failed.
+     *
+     * @var int
+     */
+    const ERROR = -1;
+
+    /**
+     * Video is planned for migration.
+     *
+     * @var int
+     */
+    const PLANNED = 1;
+
+    /**
+     * Video is being migrated.
+     *
+     * @var int
+     */
+    const MIGRATING = 2;
+
+    /**
+     * Video has been migrated.
+     *
+     * @var int
+     */
+    const MIGRATED = 3;
+
+}

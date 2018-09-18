@@ -91,6 +91,7 @@ class settings_page implements renderable, templatable {
         $defaultautomaticmigrationactivated = get_config('tool_openveo_migration', 'automaticmigrationactivated');
         $defaultdestinationplatform = get_config('tool_openveo_migration', 'destinationplatform');
         $defaultstatuspollingfrequency = get_config('tool_openveo_migration', 'statuspollingfrequency');
+        $defaultfilefields = get_config('tool_openveo_migration', 'filefields');
         $filetypesutil = new filetypes_util();
 
         // Create an OpenVeo web service client.
@@ -127,7 +128,8 @@ class settings_page implements renderable, templatable {
                 'value' => $defaultdestinationplatform,
                 'options' => $destinationplatforms
             ),
-            'statuspollingfrequency' => $defaultstatuspollingfrequency
+            'statuspollingfrequency' => $defaultstatuspollingfrequency,
+            'filefields' => $defaultfilefields
         );
         $this->form = new settings_form(null, $defaults);
 
@@ -147,6 +149,7 @@ class settings_page implements renderable, templatable {
             set_config('automaticmigrationactivated', $data->automaticmigrationactivated, 'tool_openveo_migration');
             set_config('destinationplatform', $data->destinationplatform, 'tool_openveo_migration');
             set_config('statuspollingfrequency', $statuspollingfrequency, 'tool_openveo_migration');
+            set_config('filefields', $data->filefields, 'tool_openveo_migration');
 
         }
     }
@@ -170,7 +173,7 @@ class settings_page implements renderable, templatable {
      *
      * @return array The list of configured video platforms in OpenVeo Publish
      */
-    private function get_openveo_platforms() : array {
+    protected function get_openveo_platforms() : array {
         try {
             $response = $this->client->get('publish/platforms');
 

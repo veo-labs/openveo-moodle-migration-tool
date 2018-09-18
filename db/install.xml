@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/openveo_migration/db" VERSION="20180911" COMMENT="XMLDB file for Moodle admin/tool/openveo_migration"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_openveo_migration" COMMENT="The list of Moodle files selected to be migrated and their actual status in the migration process">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="filesid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Id of a Moodle file in files table"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The migration status of the file"/>
+        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The migration state of the file"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The name of the migrated video"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The context id of the plugin instance owning the video"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="filesid" TYPE="foreign" FIELDS="filesid" REFTABLE="files" REFFIELDS="id" COMMENT="Foreign key to the id field of the files table"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -15,21 +15,40 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines plugin version and requirements.
+ * Defines a states machine transition.
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_openveo_migration\local\machine;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_openveo_migration';
-$plugin->version = 2018090400;
-$plugin->requires = 2017111300;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.0';
-$plugin->dependencies = array(
-    'local_openveo_api' => 2018073100,
-    'repository_openveo' => 2018073100
-);
+/**
+ * Defines a states machine transition.
+ *
+ * @package tool_openveo_migration
+ * @copyright 2018 Veo-labs
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class transition {
+
+    /**
+     * Executes the transition.
+     *
+     * Returning false will abort the machine.
+     *
+     * @return bool true if transition succeeded, false if something went wrong
+     */
+    public abstract function execute() : bool;
+
+    /**
+     * Gets non-localised transition name.
+     *
+     * @return string The transition name
+     */
+    public abstract function get_name() : string;
+
+}
