@@ -64,7 +64,7 @@ class getting_video_failed extends base {
     public function get_description() : string {
         $component = $this->other['component'];
         $filearea = $this->other['filearea'];
-        $mimetypes = implode(',' $this->other['mimetypes']);
+        $mimetypes = implode(',', $this->other['mimetypes']);
         return "Failed to get video (component=$component, filearea=$filearea, mimetypes=$mimetypes).";
     }
 
