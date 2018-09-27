@@ -48,4 +48,15 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('tool_openveo_migration/settings_page', $data);
     }
 
+    /**
+     * Renders the planning page using template engine.
+     *
+     * @param planning_page $page The planning page
+     * @return string The computed HTML of the planning page
+     */
+    public function render_planning_page(planning_page $page) : string {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_openveo_migration/planning_page', $data);
+    }
+
 }

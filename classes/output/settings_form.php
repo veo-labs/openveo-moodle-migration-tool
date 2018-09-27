@@ -126,6 +126,33 @@ class settings_form extends moodleform {
             $this->_form->setDefault('statuspollingfrequency', $this->_customdata['statuspollingfrequency']);
         }
 
+        // Number of videos to display in planning page.
+        // PARAM_RAW is used instead of PARAM_INT because PARAM_INT does not allow field with no value, it keeps setting the
+        // value to 0. Consequently field validation is made using a regular expression. It validates that the value corresponds
+        // to a positive number greater than 0.
+        $this->_form->addElement(
+                'text',
+                'planningpagevideosnumber',
+                get_string('settingsplanningpagevideosnumberlabel', 'tool_openveo_migration'),
+                array('size' => 2)
+        );
+        $this->_form->setType('planningpagevideosnumber', PARAM_RAW);
+        $this->_form->addHelpButton(
+                'planningpagevideosnumber',
+                'settingsplanningpagevideosnumber',
+                'tool_openveo_migration'
+        );
+        $this->_form->addRule(
+                'planningpagevideosnumber',
+                get_string('settingsplanningpagevideosnumberformaterror', 'tool_openveo_migration'),
+                'regex',
+                '/^[1-9]{1}[0-9]*$/',
+                'client'
+        );
+        if (!empty($this->_customdata['planningpagevideosnumber'])) {
+            $this->_form->setDefault('planningpagevideosnumber', $this->_customdata['planningpagevideosnumber']);
+        }
+
         // File fields.
         $this->_form->addElement(
                 'textarea',

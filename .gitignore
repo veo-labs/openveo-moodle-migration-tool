@@ -17,3 +17,6 @@ ehthumbs.db
 
 # IDE
 /nbproject
+
+# AMD build
+/amd/build

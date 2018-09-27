@@ -1,0 +1,133 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_openveo_migration/planning_page
+
+    OpenVeo Migration Tool planning page template to register Moodle video files for migration.
+
+    Context variables required for this template:
+    * title - The translated title of the page
+    * searchform - The HTML of the search formular
+    * actionsform - The HTML of the actions formular
+    * errormessage - The HTML of the error notification if any
+    * paginationbar - The HTML of the pagination bar
+    * videosdisplayed - Indicates if search results should be displayed
+    * contexthelp - Parameters expected by core/help_icon template with information about the contexts column
+    * datehelp - Parameters expected by core/help_icon template with information about the date column
+    * videos - The list of Moodle video files corresponding to the research
+    * totalresults - The total number of results for searched parameters
+
+    Example context (json):
+    {
+        "title": "Planning page title",
+        "searchform": "<form>[...]</form>",
+        "actionsform": "<form>[...]</form>",
+        "errormessage": "<div>...</div>",
+        "paginationbar": "<div>[...]</div>",
+        "videosdisplayed": true,
+        "contexthelp": {
+            "text": "<p>[...]</p>",
+            "title": "Help with Contexts",
+            "alt": "Help with Contexts",
+            "url": "[...]help.php?component=tool_openveo_migration&identifier=planningtablecontexts&lang=en",
+            "linktext": "",
+            "icon": {
+                "attributes": [
+                    {"name": "title", "value": "Help with Contexts"},
+                    {"name": "alt", "value": "Help with Contexts"},
+                    {"name": "src", "value": "[...]"}
+                ]
+            }
+        },
+        "datehelp": {
+            "text": "<p>[...]</p>",
+            "title": "Help with Date",
+            "alt": "Help with Date",
+            "url": "[...]help.php?component=tool_openveo_migration&identifier=planningtabledate&lang=en",
+            "linktext": "",
+            "icon": {
+                "attributes": [
+                    {"name": "title", "value": "Help with Date"},
+                    {"name": "alt", "value": "Help with Date"},
+                    {"name": "src", "value": "[...]"}
+                ]
+            }
+        },
+        "videos": [
+            {
+                "id": 42,
+                "filename": "File name",
+                "contexts": [
+                    {
+                        "name": "Context 1",
+                        "url": "[...]"
+                    }
+                ],
+                "timecreated": 438134400,
+                "type": "video/mp4",
+                "status": 4,
+                "statuslabel": "Unregistered",
+                "statusclass": "statusinfo"
+            }
+        ],
+        "totalresults": 42
+    }
+}}
+<div class="tool-openveo-migration-planning-page">
+    <h2>{{title}}</h2>
+
+    {{{errormessage}}}
+    {{{searchform}}}
+
+    {{#videosdisplayed}}
+        <table class="admintable generaltable fullwidth">
+            <caption>{{#str}}planningtablecaption, tool_openveo_migration, {{totalresults}}{{/str}}</caption>
+            <thead>
+                <tr>
+                    <th scope="col"><input type="checkbox" name="all" /></th>
+                    <th scope="col">{{#str}}planningtablefilename, tool_openveo_migration{{/str}}</th>
+                    <th scope="col">{{#str}}planningtablecontexts, tool_openveo_migration{{/str}}{{#contexthelp}}{{>core/help_icon}}{{/contexthelp}}</th>
+                    <th scope="col">{{#str}}planningtabledate, tool_openveo_migration{{/str}}{{#datehelp}}{{>core/help_icon}}{{/datehelp}}</th>
+                    <th scope="col">{{#str}}planningtabletype, tool_openveo_migration{{/str}}</th>
+                    <th scope="col">{{#str}}planningtablestatus, tool_openveo_migration{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#videos}}
+                    <tr data-id="{{id}}" data-status="{{status}}">
+                        <td><input type="checkbox" /></td>
+                        <td>{{filename}}</td>
+                        <td>
+                            {{#contexts}}
+                                <a href="{{url}}">{{name}}</a><br/>
+                            {{/contexts}}
+                        </td>
+                        <td>{{#userdate}} {{timecreated}}, {{#str}} strftimedate {{/str}} {{/userdate}}</td>
+                        <td>{{type}}</td>
+                        <td><span class="{{statusclass}}">{{statuslabel}}</span></td>
+                    </tr>
+                {{/videos}}
+            </tbody>
+        </table>
+        {{{paginationbar}}}
+        {{{actionsform}}}
+    {{/videosdisplayed}}
+
+    {{#js}}
+        require(['tool_openveo_migration/planningmanager']);
+    {{/js}}
+</div>

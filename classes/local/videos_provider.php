@@ -109,7 +109,11 @@ class videos_provider {
                 $video,
                 intval($registeredvideo->id),
                 intval($registeredvideo->status),
-                intval($registeredvideo->state)
+                intval($registeredvideo->state),
+                $registeredvideo->filename,
+                array($registeredvideo->contextid),
+                $registeredvideo->timecreated,
+                $registeredvideo->mimetype
         );
 
     }
@@ -134,9 +138,9 @@ class videos_provider {
         $query = "SELECT f.id
                 FROM {files} f
                 LEFT JOIN {tool_openveo_migration} tom ON f.id = tom.filesid
-                WHERE component = ?
-                AND filearea = ?
-                AND mimetype $mimetypesexpression
+                WHERE f.component = ?
+                AND f.filearea = ?
+                AND f.mimetype $mimetypesexpression
                 AND f.referencefileid IS NULL
                 AND tom.filesid IS NULL";
 
@@ -149,6 +153,161 @@ class videos_provider {
         } else {
             return $this->filestorage->get_file_by_id(current($videos)->id);
         }
+    }
+
+    /**
+     * Gets Moodle video files with migration information.
+     *
+     * Only original videos are returned, not aliases.
+     * There are several statuses: ERROR, PLANNED, MIGRATING, MIGRATED, UNREGISTERED, BLOCKED and NOT_SUPPORTED.
+     * ERROR, PLANNED, MIGRATING and MIGRATED will behave as expected returning the list of videos corresponding with the status.
+     * NOT_SUPPORTED status is not supported by this method as requesting for videos in the list of supported fields (from
+     * configuration) will result in a large database query. NOT_SUPPORTED videos will be part of results for a status set to
+     * UNREGISTERED or null.
+     * UNREGISTERED status corresponds to all videos not registered in tool_openveo_migration table which means it embraces both
+     * UNREGISTERED and NOT_SUPPORTED videos.
+     * BLOCKED status correponds to videos in status ERROR with a state different from NOT_INITIALIZED.
+     * If status is not set, then it will return either NOT_SUPPORTED / UNREGISTERED videos and videos with a stable status.
+     *
+     * Returned videos may miss information depending on their status. For example a MIGRATED video won't have an associative Moodle
+     * video file as it does not exist anymore. UNREGISTERED / NOT_SUPPORTED videos won't have any migration information.
+     *
+     * @param int $from A timestamp to get only videos created at this date or after
+     * @param int $to A timestamp to get only videos created at this date or before
+     * @param array $mimetypes The MIME types to get only videos of these types
+     * @param int $status The migration status to get only videos in this status
+     * @param int $limit The maximum number of videos to get
+     * @param int $page The page to fetch in the paginated system
+     * @return array An associative array containing the paginated results with a key "page" holding the current page, a key "limit"
+     * holding the limit number of fetched videos, a key "pages" holding the total number of pages, a key "total" holding the total
+     * number of videos and a key "results" holding the list of registered_video instances
+     * @throws dml_exception A DML specific exception is thrown for any errors
+     */
+    public function get_videos(int $from = null, int $to = null, array $mimetypes = null, int $status = null, int $limit = 10,
+                               int $page = 0) : array {
+        $results = array();
+        $limit = !empty($limit) ? $limit : 10;
+        $page = max(0, $page);
+        $offset = $page * $limit;
+        list($mimetypesexpression, $mimetypesvalues) = $this->database->get_in_or_equal($mimetypes, SQL_PARAMS_QM, 'mimetype');
+        $parameters = $mimetypesvalues;
+
+        // Get Moodle video file information from files table and migration information from tool_openveo_migration table.
+        // The trick here is that we want information from both files table and tool_openveo_migration table but sometimes
+        // no relation exist between the two tables. It happens when a video is migrated, then it has an entry in
+        // tool_openveo_migration table but no associated entry in files table. It also happens when a video is not registered yet
+        // and thus has an entry in files table but not in tool_openveo_migration.
+        // We need a full outer join to get entries from files and tool_openveo_migration tables even if not relation exists between
+        // them.
+        // The first SELECT request gets all videos present in files table with associated information from tool_openveo_migration if
+        // any.
+        // The second SELECT request gets all videos not present in files tables but in tool_openveo_migration (the MIGRATED videos).
+        // The first SELECT uses the files table "id" column as the id and the second SELECT uses the tool_openveo_migration table
+        // "id" column as the id because there is no corresponding entry in the files table, then the column "id" in files table is
+        // null.
+        // To avoid collisions between entries returned by the first SELECT and entries returned by the second SELECT, the second
+        // SELECT id in prefixed by "tom-".
+        // Also note that the second SELECT gets tool_openveo_migration columns "mimetype" and "timecreated" overriding equivalent
+        // columns in files table because we filter all entries using these columns.
+        $query = "FROM (
+                SELECT f.id, f.contenthash, f.pathnamehash, f.contextid, f.component, f.filearea, f.itemid, f.filepath,
+                        f.filename, f.userid, f.filesize, f.mimetype, f.status, f.source, f.author, f.license, f.timecreated,
+                        f.timemodified, f.sortorder, f.referencefileid, tom.id as tommigrationid, tom.status as tomstatus,
+                        tom.state as tomstate, tom.filename as tomfilename, tom.contextid as tomcontextid
+                FROM {files} f
+                LEFT JOIN {tool_openveo_migration} tom ON f.id = tom.filesid
+
+                UNION ALL
+
+                SELECT CONCAT('tom-', tom.id) as id, f.contenthash, f.pathnamehash, f.contextid, f.component, f.filearea,
+                        f.itemid, f.filepath, f.filename, f.userid, f.filesize, tom.mimetype, f.status, f.source, f.author,
+                        f.license, tom.timecreated, f.timemodified, f.sortorder, f.referencefileid, tom.id as tommigrationid,
+                        tom.status as tomstatus, tom.state as tomstate, tom.filename as tomfilename, tom.contextid as tomcontextid
+                FROM {tool_openveo_migration} tom
+                LEFT JOIN {files} f ON f.id = tom.filesid
+                WHERE f.id IS NULL
+            ) as v
+            WHERE v.referencefileid IS NULL
+            AND v.mimetype $mimetypesexpression
+            AND (v.filearea <> 'draft' OR v.filearea IS NULL)";
+
+        if (!empty($from)) {
+            $query .= ' AND v.timecreated >= ? ';
+            $parameters[] = $from;
+        }
+
+        if (!empty($to)) {
+            $query .= ' AND v.timecreated <= ? ';
+            $parameters[] = $to;
+        }
+
+        if (isset($status)) {
+            if ($status === statuses::UNREGISTERED) {
+                $query .= ' AND v.tomstatus IS NULL ';
+            } else if ($status === statuses::BLOCKED) {
+                $query .= ' AND v.tomstatus = ? ';
+                $parameters[] = statuses::ERROR;
+
+                $query .= ' AND v.tomstate <> ? ';
+                $parameters[] = states::NOT_INITIALIZED;
+            } else if ($status === statuses::ERROR) {
+                $query .= ' AND v.tomstatus = ? AND v.tomstate = ? ';
+                $parameters[] = statuses::ERROR;
+                $parameters[] = states::NOT_INITIALIZED;
+            } else {
+                $query .= ' AND v.tomstatus = ? ';
+                $parameters[] = $status;
+            }
+        }
+
+        $total = $this->database->count_records_sql("SELECT COUNT(*) $query", $parameters);
+        $videos = $this->database->get_records_sql(
+                "SELECT * $query",
+                $parameters,
+                $offset,
+                $limit
+        );
+
+        if (sizeof($videos) !== 0) {
+            foreach ($videos as $id => $video) {
+                $contextids = array();
+                $file = null;
+
+                if (isset($video->contenthash)) {
+
+                    // Video has a corresponding Moodle file.
+                    // Retrieve it.
+                    $file = $this->filestorage->get_file_by_id($id);
+
+                    // Find where the video and its aliases are used.
+                    $contextids[] = $video->contextid;
+                    $aliases = $this->get_video_aliases($file);
+                    foreach ($aliases as $id => $alias) {
+                        $contextids[] = $alias->get_contextid();
+                    }
+
+                } else {
+
+                    // Video has no corresponding Moodle file.
+                    // Video has been migrated.
+                    if (isset($video->tomcontextid)) {
+                        $contextids[] = $video->tomcontextid;
+                    }
+
+                }
+
+                $results[] = new registered_video($file, $video->tommigrationid, $video->tomstatus, $video->tomstate,
+                                                  $video->tomfilename, $contextids, $video->timecreated, $video->mimetype);
+            }
+        }
+
+        return array(
+            'page' => $page,
+            'limit' => $limit,
+            'pages' => intval(ceil($total / $limit)),
+            'total' => $total,
+            'results' => $results
+        );
     }
 
     /**
@@ -165,7 +324,49 @@ class videos_provider {
         $record->filesid = $video->get_id();
         $record->status = statuses::PLANNED;
         $record->state = states::NOT_INITIALIZED;
+        $record->filename = $video->get_filename();
+        $record->contextid = $video->get_contextid();
+        $record->timecreated = $video->get_timecreated();
+        $record->mimetype = $video->get_mimetype();
         return $this->database->insert_record('tool_openveo_migration', $record);
+    }
+
+    /**
+     * Plans videos for migration.
+     *
+     * It adds new records to the tool_openveo_migration table with status "planned".
+     *
+     * @param array $videos The Moodle video files to plan
+     * @throws dml_exception A DML specific exception is thrown for any errors
+     */
+    public function plan_videos(array $videos) {
+        $records = array();
+
+        foreach ($videos as $video) {
+            $record = new stdClass();
+            $record->filesid = $video->get_id();
+            $record->status = statuses::PLANNED;
+            $record->state = states::NOT_INITIALIZED;
+            $record->filename = $video->get_filename();
+            $record->contextid = $video->get_contextid();
+            $record->timecreated = $video->get_timecreated();
+            $record->mimetype = $video->get_mimetype();
+            $records[] = $record;
+        }
+
+        $this->database->insert_records('tool_openveo_migration', $records);
+    }
+
+    /**
+     * Deregisters videos from migration.
+     *
+     * It removes records from tool_openveo_migration table.
+     *
+     * @param array $ids The registered video ids
+     * @throws dml_exception A DML specific exception is thrown for any errors
+     */
+    public function deregister_videos(array $ids) {
+        $this->database->delete_records_list('tool_openveo_migration', 'id', $ids);
     }
 
     /**

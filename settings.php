@@ -38,7 +38,15 @@ if ($hassiteconfig) {
             "$CFG->wwwroot/admin/tool/openveo_migration/openveo_migration_settings.php"
     );
 
-    // Add the page to the admin tree (admin_root class) in 'tools' category
+    // Create the planning page.
+    $migrationpage = new admin_externalpage(
+            'tool_openveo_migration_planning',
+            get_string('planningtitle', 'tool_openveo_migration'),
+            "$CFG->wwwroot/admin/tool/openveo_migration/openveo_migration_planning.php"
+    );
+
+    // Add pages to the admin tree (admin_root class) in 'tools' category.
     $ADMIN->add('tools', $settingspage);
+    $ADMIN->add('tools', $migrationpage);
 
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/openveo_migration/db" VERSION="20180911" COMMENT="XMLDB file for Moodle admin/tool/openveo_migration"
+<XMLDB PATH="admin/tool/openveo_migration/db" VERSION="20180925" COMMENT="XMLDB file for Moodle admin/tool/openveo_migration"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -12,6 +12,8 @@
         <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The migration state of the file"/>
         <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The name of the migrated video"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The context id of the plugin instance owning the video"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The creation date time of the migrated video"/>
+        <FIELD NAME="mimetype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The MIME type of the migrated video"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

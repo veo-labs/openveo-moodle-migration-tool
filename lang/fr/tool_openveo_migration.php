@@ -22,13 +22,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Plugin name in administration
+// Plugin name in administration.
 $string['pluginname'] = 'OpenVeo Migration Tool';
 
-// Privacy (GDPR)
+// Privacy (GDPR).
 $string['privacy:metadata'] = 'Le plugin OpenVeo Migration Tool n\'enregistre pas de données personnelles.';
 
-// Settings page
+// Settings page.
 $string['settingstitle'] = 'OpenVeo Migration Tool configuration';
 $string['settingsdescription'] = '<p>Configurez la manière dont les vidéos Moodle seront migrées sur OpenVeo. Seules les vidéos de type défini ici seront migrées, assurez-vous auparavant qu\'OpenVeo est capable de recevoir les types de vidéos spécifiés. OpenVeo Migration Tool permet de sélectionner précisément les vidéos à migrer à l\'aide de la page de migration mais il est également possible de migrer les vidéos automatiquement sans devoir les sélectionner (si toutes les vidéos présentes et futures doivent être migrées) à l\'aide de l\'option "Migration automatique". Vous pouvez stopper la migration des vidéos à tout moment en stoppant la tâche planifiée correspondante.</p>';
 $string['settingsvideotypestomigratelabel'] = 'Types de vidéos à migrer';
@@ -50,18 +50,70 @@ $string['settingsstatuspollingfrequencylabel'] = 'Fréquence de récupération d
 $string['settingsstatuspollingfrequency'] = 'Fréquence de récupération du statut (en secondes)';
 $string['settingsstatuspollingfrequency_help'] = 'Lors de la migration d\'une vidéo Moodle vers OpenVeo, OpenVeo Migration Tool s\'informe régulièrement de l\'état de la vidéo auprès d\'OpenVeo jusqu\'à ce qu\'elle soit complétement traitée. La fréquence par défaut est de 10.';
 $string['settingsstatuspollingfrequencyformaterror'] = 'Fréquence invalide (ex : 10).';
+$string['settingsplanningpagevideosnumberlabel'] = 'Planification : Nombre maximum de vidéos par page';
+$string['settingsplanningpagevideosnumber'] = 'Planification : Nombre maximum de vidéos par page';
+$string['settingsplanningpagevideosnumber_help'] = 'Le nombre de vidéos à afficher par page de résultats sur la page de planification.';
+$string['settingsplanningpagevideosnumberformaterror'] = 'Nombre de vidéos invalide (ex : 10).';
 $string['settingsfilefieldslabel'] = 'Champs d\'ajout de fichiers';
 $string['settingsfilefields'] = 'Champs d\'ajout de fichiers';
 $string['settingsfilefields_help'] = 'La liste des champs de formulaire de type "editor" et "filemanager" permettant d\'ajouter des fichiers. Si une réfèrence vers une vidéo OpenVeo est ajoutée à partir d\'un champ de formulaire sans que le champ ne soit défini ici, OpenVeo Migration Tool ne migrera pas la vidéo. Chaque ligne représente un champ avec trois colonnes : le composant propriétaire du champ (component), la zone du fichier (filearea) et les méthodes supportées (supportedmethods). Les colonnes sont séparées par des barres verticales (pipe). Plus d\'informations disponibles sur <a href="https://github.com/veo-labs/openveo-moodle-migration-tool" target="_blank">la page du plugin</a>. L\'ordre des lignes est également important puisqu\'il détermine l\'ordre de la migration automatique. Les vidéos correspondant au premier champ (première ligne) seront migrées avant les vidéos correspondant au deuxième champ (seconde ligne) et ainsi de suite.';
 $string['settingssubmitlabel'] = 'Enregistrer les modifications';
 
-// Errors
+// Planning page.
+$string['planningtitle'] = 'OpenVeo Migration Tool planification';
+
+// Planning page: search form.
+$string['planningsearchgroup'] = 'Rechercher';
+$string['planningsearchfrom'] = 'Du';
+$string['planningsearchto'] = 'Au';
+$string['planningsearchtypeslabel'] = 'Type';
+$string['planningsearchtypesall'] = 'Tous';
+$string['planningsearchstatuslabel'] = 'Statut';
+$string['planningsearchstatusall'] = 'Tous';
+$string['planningsearchstatus0'] = 'Erreur';
+$string['planningsearchstatus1'] = 'Programmée';
+$string['planningsearchstatus2'] = 'En cours de migration';
+$string['planningsearchstatus3'] = 'Migrée';
+$string['planningsearchstatus4'] = 'Non programmée';
+$string['planningsearchstatus5'] = 'Bloquée';
+$string['planningsearchsubmitlabel'] = 'Rechercher';
+
+// Planning page: action form.
+$string['planningactionssubmitlabel'] = 'Appliquer';
+$string['planningactionslabel'] = 'Pour les vidéos sélectionnées...';
+$string['planningactionschooseaction'] = 'Choisir...';
+$string['planningactionsregisteraction'] = 'Programmer';
+$string['planningactionsderegisteraction'] = 'Déprogrammer';
+$string['planningactionsremoveaction'] = 'Supprimer';
+
+// Planning page: table of results.
+$string['planningtablecaption'] = 'Résultats de recherche ({$a})';
+$string['planningtablefilename'] = 'Nom du fichier';
+$string['planningtablecontexts'] = 'Contextes';
+$string['planningtablecontexts_help'] = 'La liste des contextes où apparaît la vidéo. Plusieurs contextes signifie que la vidéo possède des références.';
+$string['planningtabledate'] = 'Date';
+$string['planningtabledate_help'] = 'La date d\'ajout de la vidéo originale (pas les références) dans Moodle.';
+$string['planningtabletype'] = 'Type';
+$string['planningtablestatus'] = 'Statut';
+$string['planningtablestatus0'] = 'Erreur';
+$string['planningtablestatus1'] = 'Programmée';
+$string['planningtablestatus2'] = 'En cours de migration';
+$string['planningtablestatus3'] = 'Migrée';
+$string['planningtablestatus4'] = 'Non programmée';
+$string['planningtablestatus5'] = 'Bloquée';
+$string['planningtablestatus6'] = 'Non supportée';
+
+// Errors.
 $string['errorlocalpluginnotconfigured'] = 'Le plugin local "OpenVeo API" n\'est pas configuré.';
 $string['errornovideoplatform'] = 'Aucune platforme vidéos de configurée sur OpenVeo Publish.';
 $string['errormigrationwrongconfiguration'] = 'La migration nécessite au moins un type de vidéos et une platforme de destination.';
 $string['errornorepositoryopenveo'] = 'Aucun dépôt OpenVeo trouvé.';
+$string['errorgettingvideos'] = 'La recherche de vidéos a échoué (cf. logs pour plus d\'information).';
+$string['errorpreparingvideos'] = 'La recherche de vidéos a échoué (cf. logs pour plus d\'information).';
+$string['errorplanningvideos'] = 'L\'ajout de vidéos à migrer a échoué (cf. logs pour plus d\'information).';
+$string['errorderegisteringvideos'] = 'La déprogrammation des vidéos a échoué (cf. logs pour plus d\'information).';
 
-// Events
+// Events.
 $string['eventgettingplatformsfailed'] = 'Récupération des plateformes vidéos echouée';
 $string['eventvideomigrationstarted'] = 'Migration vidéo démarrée';
 $string['eventvideomigrationended'] = 'Migration vidéo terminée';
@@ -88,6 +140,10 @@ $string['eventconnectingtoopenveofailed'] = 'Connexion à OpenVeo échouée';
 $string['eventrestoringoriginalfailed'] = 'Récupération vidéo originale échouée';
 $string['eventrestoringoriginalaliasesfailed'] = 'Récupération alias vidéo originale échouée';
 $string['eventupdatingregisteredvideoidfailed'] = 'Modification id vidéo planifiée échouée';
+$string['eventgettingvideosfailed'] = 'Récupération fichiers vidéos Moodle échouée';
+$string['eventgettingvideocontextfailed'] = 'Récupération contexte vidéo échouée';
+$string['eventplanningvideosfailed'] = 'Programmation vidéos échouée';
+$string['eventderegisteringvideosfailed'] = 'Déprogrammation vidéos échouée';
 
-// Tasks
+// Tasks.
 $string['taskmigratename'] = 'Migrer les vidéos Moodle vers OpenVeo';

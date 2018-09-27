@@ -63,4 +63,25 @@ interface statuses {
      */
     const MIGRATED = 3;
 
+    /**
+     * Video is not registered for migration.
+     *
+     * @var int
+     */
+    const UNREGISTERED = 4;
+
+    /**
+     * Video is blocked, both migration and rollback failed.
+     *
+     * @var int
+     */
+    const BLOCKED = 5;
+
+    /**
+     * Video is not supported and can't be migrated.
+     *
+     * @var int
+     */
+    const NOT_SUPPORTED = 6;
+
 }

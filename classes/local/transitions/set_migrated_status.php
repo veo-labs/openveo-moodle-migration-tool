@@ -67,6 +67,8 @@ class set_migrated_status extends video_transition {
     /**
      * Executes transition.
      *
+     * // TODO: Get the contexts of video aliases too
+     *
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
@@ -78,6 +80,8 @@ class set_migrated_status extends video_transition {
             $data->status = statuses::MIGRATED;
             $data->filename = $videofile->get_filename();
             $data->contextid = $videofile->get_contextid();
+            $data->timecreated = $videofile->get_timecreated();
+            $data->mimetype = $videofile->get_mimetype();
             $this->videosprovider->update_registered_video($data);
         } catch (Exception $e) {
             $this->send_updating_video_migration_status_failed_event(
