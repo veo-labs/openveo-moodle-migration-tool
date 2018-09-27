@@ -44,6 +44,7 @@ use tool_openveo_migration\local\states;
 use tool_openveo_migration\local\videos_provider;
 use tool_openveo_migration\local\file_system;
 use tool_openveo_migration\local\video_machine;
+use tool_openveo_migration\local\utils;
 use tool_openveo_migration\event\getting_registered_video_failed;
 use tool_openveo_migration\event\getting_video_failed;
 use tool_openveo_migration\event\planning_video_failed;
@@ -118,7 +119,7 @@ class migrate extends scheduled_task {
         }
 
         // Build file fields from configuration.
-        $filefields = $this->get_moodle_file_fields();
+        $filefields = utils::get_moodle_file_fields();
 
         // Retrieve all MIME types corresponding to videotypestomigrate setting.
         $acceptedmimetypes = file_get_typegroup('type', $videotypestomigrate);
@@ -280,32 +281,6 @@ class migrate extends scheduled_task {
 
         }
 
-    }
-
-    /**
-     * Gets Moodle file fields.
-     *
-     * @return array An associative array describing the Moodle file fields with component/filearea as key and an
-     * associative array as values containing information about the field (component, filearea and supportedmethods)
-     */
-    protected function get_moodle_file_fields() : array {
-        $filefielddescriptions = array();
-        $filefields = get_config('tool_openveo_migration', 'filefields');
-        $filefields = preg_split('/\r\n|\r|\n/', $filefields);
-
-        foreach ($filefields as $filefield) {
-            $filefieldcolumns = explode('|', $filefield);
-
-            if (isset($filefieldcolumns[0]) && isset($filefieldcolumns[1])) {
-                $filefielddescriptions[$filefieldcolumns[0] . '/' . $filefieldcolumns[1]] = array(
-                    'component' => $filefieldcolumns[0],
-                    'filearea' => $filefieldcolumns[1],
-                    'supportedmethods' => $filefieldcolumns[2]
-                );
-            }
-        }
-
-        return $filefielddescriptions;
     }
 
     /**
