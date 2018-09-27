@@ -40,7 +40,7 @@ interface statuses {
      *
      * @var int
      */
-    const ERROR = -1;
+    const ERROR = 0;
 
     /**
      * Video is planned for migration.
