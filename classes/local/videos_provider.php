@@ -33,13 +33,12 @@ use moodle_database;
 use tool_openveo_migration\local\statuses;
 use tool_openveo_migration\local\states;
 use tool_openveo_migration\local\file_system;
+use tool_openveo_migration\local\registered_video;
 
 /**
  * Defines a provider to manage Moodle video files and registered videos.
  *
  * Registered videos refer to videos added to the tool_openveo_migration table and videos refer to Moodle videos.
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -105,10 +104,13 @@ class videos_provider {
         // Get all information about the associated Moodle file.
         $registeredvideo = current($videos);
         $video = $this->filestorage->get_file_by_id($registeredvideo->filesid);
-        $video->tommigrationid = intval($registeredvideo->id);
-        $video->tomstatus = intval($registeredvideo->status);
-        $video->tomstate = intval($registeredvideo->state);
-        return $video;
+
+        return new registered_video(
+                $video,
+                intval($registeredvideo->id),
+                intval($registeredvideo->status),
+                intval($registeredvideo->state)
+        );
 
     }
 
@@ -169,30 +171,30 @@ class videos_provider {
     /**
      * Updates a registered video migration status.
      *
-     * @param stored_file $video The registered video (should have a property "tommigrationid" containing the id of the video in the
-     * tool_openveo_migration table)
+     * @param registered_video $video The registered video
      * @param int $status The new migration status
      * @throws dml_exception A DML specific exception is thrown for any errors
      */
-    public function update_video_migration_status(stored_file $video, int $status) {
+    public function update_video_migration_status(registered_video &$video, int $status) {
         $data = new stdClass();
-        $data->id = $video->tommigrationid;
+        $data->id = $video->get_id();
         $data->status = $status;
+        $video->set_status($status);
         $this->database->update_record('tool_openveo_migration', $data);
     }
 
     /**
      * Updates a registered video migration state.
      *
-     * @param stored_file $video The registered video (should have a property "tommigrationid" containing the id of the video in the
-     * tool_openveo_migration table)
+     * @param registered_video $video The registered video
      * @param int $state The new migration state
      * @throws dml_exception A DML specific exception is thrown for any errors
      */
-    public function update_video_migration_state(stored_file $video, int $state) {
+    public function update_video_migration_state(registered_video &$video, int $state) {
         $data = new stdClass();
-        $data->id = $video->tommigrationid;
+        $data->id = $video->get_id();
         $data->state = $state;
+        $video->set_state($state);
         $this->database->update_record('tool_openveo_migration', $data);
     }
 

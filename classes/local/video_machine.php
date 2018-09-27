@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 // Include OpenVeo REST PHP client autoloader.
 require_once($CFG->dirroot . '/local/openveo_api/lib.php');
 
-use stored_file;
 use context_system;
 use file_storage;
 use tool_openveo_migration\local\machine\machine;
@@ -52,6 +51,7 @@ use tool_openveo_migration\local\transitions\restore_original;
 use tool_openveo_migration\local\transitions\restore_original_aliases;
 use tool_openveo_migration\local\videos_provider;
 use tool_openveo_migration\local\file_system;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\video_transition_started;
 use tool_openveo_migration\event\video_transition_ended;
 use tool_openveo_migration\event\video_transition_failed;
@@ -61,8 +61,6 @@ use Openveo\Client\Client;
  * Defines a states machine capable of migrating a Moodle video file to OpenVeo.
  *
  * Video status and state evolve during the migration process.
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -71,9 +69,9 @@ use Openveo\Client\Client;
 class video_machine extends machine {
 
     /**
-     * The original Moodle file video to migrate.
+     * The registered video to migrate.
      *
-     * @var stored_file
+     * @var registered_video
      */
     protected $originalvideo;
 
@@ -87,7 +85,7 @@ class video_machine extends machine {
     /**
      * Creates a machine to migrate a Moodle video file to OpenVeo.
      *
-     * @param stored_file $originalvideo The Moodle video file to migrate
+     * @param registered_video $originalvideo The registered video to migrate
      * @param Openveo\Client\Client $client The OpenVeo web service client
      * @param tool_openveo_migration\local\videos_provider $videosprovider The videos provider
      * @param file_storage $filestorage The Moodle file storage instance
@@ -100,11 +98,11 @@ class video_machine extends machine {
      * associative array as values containing information about the field (component, filearea, supportedmethods)
      * @param int $openveorepositoryid The id of the OpenVeo Repository instance to associate the new video to
      */
-    public function __construct(stored_file &$originalvideo, Client $client, videos_provider $videosprovider,
+    public function __construct(registered_video &$originalvideo, Client $client, videos_provider $videosprovider,
                                 file_storage $filestorage, file_system $filesystem, string $platform, int $statuspollingfrequency,
                                 array $filefields, int $openveorepositoryid) {
         $this->originalvideo = $originalvideo;
-        $this->state = $originalvideo->tomstate;
+        $this->state = $originalvideo->get_state();
         $this->rollback = false;
         $this->videosprovider = $videosprovider;
         $this->transitions = array(
@@ -261,7 +259,7 @@ class video_machine extends machine {
      * @param string $name The transition name
      */
     protected function handle_transition_started(string $name) {
-        $this->send_video_transition_started_event($this->originalvideo->get_id(), $name);
+        $this->send_video_transition_started_event($this->originalvideo->get_file()->get_id(), $name);
     }
 
     /**
@@ -272,7 +270,7 @@ class video_machine extends machine {
      * @param string $name The transition name
      */
     protected function handle_transition_ended(string $name) {
-        $this->send_video_transition_ended_event($this->originalvideo->get_id(), $name);
+        $this->send_video_transition_ended_event($this->originalvideo->get_file()->get_id(), $name);
     }
 
     /**
@@ -283,7 +281,7 @@ class video_machine extends machine {
      * @param string $name The transition name
      */
     protected function handle_transition_failed(string $name) {
-        $this->send_video_transition_failed_event($this->originalvideo->get_id(), $name);
+        $this->send_video_transition_failed_event($this->originalvideo->get_file()->get_id(), $name);
     }
 
     /**

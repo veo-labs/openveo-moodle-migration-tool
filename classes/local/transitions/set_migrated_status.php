@@ -28,19 +28,17 @@ defined('MOODLE_INTERNAL') || die();
 
 use stdClass;
 use Exception;
-use stored_file;
 use context_system;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\local\videos_provider;
 use tool_openveo_migration\local\statuses;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\updating_video_migration_status_failed;
 
 /**
  * Defines a transition setting the video as migrated.
  *
  * It sets the video status to migrated and saves information about the migrated video to keep a trace of it.
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -58,10 +56,10 @@ class set_migrated_status extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param videos_provider $videosprovider The videos provider
      */
-    public function __construct(stored_file &$video, videos_provider $videosprovider) {
+    public function __construct(registered_video &$video, videos_provider $videosprovider) {
         parent::__construct($video);
         $this->videosprovider = $videosprovider;
     }
@@ -72,16 +70,18 @@ class set_migrated_status extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
+        $videofile = $this->originalvideo->get_file();
+
         try {
             $data = new stdClass();
-            $data->id = $this->originalvideo->tommigrationid;
+            $data->id = $this->originalvideo->get_id();
             $data->status = statuses::MIGRATED;
-            $data->filename = $this->originalvideo->get_filename();
-            $data->contextid = $this->originalvideo->get_contextid();
+            $data->filename = $videofile->get_filename();
+            $data->contextid = $videofile->get_contextid();
             $this->videosprovider->update_registered_video($data);
         } catch (Exception $e) {
             $this->send_updating_video_migration_status_failed_event(
-                    $this->originalvideo->get_id(),
+                    $videofile->get_id(),
                     statuses::MIGRATED,
                     $e->getMessage()
             );

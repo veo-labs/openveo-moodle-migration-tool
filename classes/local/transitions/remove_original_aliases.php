@@ -27,10 +27,10 @@ namespace tool_openveo_migration\local\transitions;
 defined('MOODLE_INTERNAL') || die();
 
 use Exception;
-use stored_file;
 use context_system;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\local\videos_provider;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\removing_original_aliases_failed;
 use Openveo\Client\Client;
 
@@ -38,8 +38,6 @@ use Openveo\Client\Client;
  * Defines a transition to remove original video aliases referencing the original video.
  *
  * Transition succeeds if removing original video aliases succeeded or if there is no alias.
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -57,10 +55,10 @@ class remove_original_aliases extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param tool_openveo_migration\local\videos_provider $videosprovider The videos provider
      */
-    public function __construct(stored_file &$video, videos_provider $videosprovider) {
+    public function __construct(registered_video &$video, videos_provider $videosprovider) {
         parent::__construct($video);
         $this->videosprovider = $videosprovider;
     }
@@ -71,18 +69,20 @@ class remove_original_aliases extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
+        $videofile = $this->originalvideo->get_file();
+
         try {
-            $aliases = $this->videosprovider->get_video_aliases($this->originalvideo);
+            $aliases = $this->videosprovider->get_video_aliases($videofile);
 
             if (!isset($aliases) || sizeof($aliases) === 0) {
                 return true;
             }
 
-            $this->originalvideo->tomaliases = array();
+            $aliasreferences = array();
             foreach ($aliases as $alias) {
 
                 // Keep what is needed to restore the alias if something went wrong.
-                $this->originalvideo->tomaliases[] = array(
+                $aliasreferences[] = array(
                     'contenthash' => $alias->get_contenthash(),
                     'contextid' => $alias->get_contextid(),
                     'component' => $alias->get_component(),
@@ -101,10 +101,11 @@ class remove_original_aliases extends video_transition {
                     'sortorder' => $alias->get_sortorder(),
                     'repositoryid' => $alias->get_repository_id()
                 );
+                $this->originalvideo->set_aliases($aliasreferences);
                 $this->videosprovider->remove_video($alias);
             }
         } catch(Exception $e) {
-            $this->send_removing_original_aliases_failed_event($this->originalvideo->get_id(), $e->getMessage());
+            $this->send_removing_original_aliases_failed_event($videofile->get_id(), $e->getMessage());
             return false;
         }
 

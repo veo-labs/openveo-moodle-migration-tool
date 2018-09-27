@@ -27,10 +27,10 @@ namespace tool_openveo_migration\local\transitions;
 defined('MOODLE_INTERNAL') || die();
 
 use Exception;
-use stored_file;
 use context_system;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\local\videos_provider;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\removing_original_failed;
 
 /**
@@ -54,10 +54,10 @@ class remove_original extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param tool_openveo_migration\local\videos_provider $videosprovider The videos provider
      */
-    public function __construct(stored_file &$video, videos_provider $videosprovider) {
+    public function __construct(registered_video &$video, videos_provider $videosprovider) {
         parent::__construct($video);
         $this->videosprovider = $videosprovider;
     }
@@ -68,10 +68,12 @@ class remove_original extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
+        $videofile = $this->originalvideo->get_file();
+
         try {
-            $this->videosprovider->remove_video($this->originalvideo);
+            $this->videosprovider->remove_video($videofile);
         } catch (Exception $e) {
-            $this->send_removing_original_failed_event($this->originalvideo->get_id(), $e->getMessage());
+            $this->send_removing_original_failed_event($videofile->get_id(), $e->getMessage());
             return false;
         }
 

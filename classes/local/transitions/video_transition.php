@@ -26,8 +26,8 @@ namespace tool_openveo_migration\local\transitions;
 
 defined('MOODLE_INTERNAL') || die();
 
-use stored_file;
 use context_system;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\local\machine\transition;
 use tool_openveo_migration\event\connection_failed;
 
@@ -41,18 +41,18 @@ use tool_openveo_migration\event\connection_failed;
 abstract class video_transition extends transition {
 
     /**
-     * The original Moodle file video to migrate.
+     * The registered video to migrate.
      *
-     * @var stored_file
+     * @var registered_video
      */
     protected $originalvideo;
 
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      */
-    public function __construct(stored_file &$video) {
+    public function __construct(registered_video &$video) {
         $this->originalvideo =& $video;
     }
 

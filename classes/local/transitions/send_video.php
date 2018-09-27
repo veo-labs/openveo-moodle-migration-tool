@@ -27,10 +27,10 @@ namespace tool_openveo_migration\local\transitions;
 defined('MOODLE_INTERNAL') || die();
 
 use Exception;
-use stored_file;
 use context_system;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\local\file_system;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\sending_video_failed;
 use Openveo\Client\Client;
 
@@ -38,8 +38,6 @@ use Openveo\Client\Client;
  * Defines a transition to send the Moodle video file to OpenVeo.
  *
  * Transition succeeds if sending the video to OpenVeo succeeded.
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -71,12 +69,12 @@ class send_video extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param Openveo\Client\Client $client The OpenVeo web service client
      * @param tool_openveo_migration\local\file_system $filesystem The file system instance
      * @param string $platform The videos platform to upload to (see OpenVeo Publish documentation)
      */
-    public function __construct(stored_file &$video, Client $client, file_system $filesystem, string $platform) {
+    public function __construct(registered_video &$video, Client $client, file_system $filesystem, string $platform) {
         parent::__construct($video);
         $this->client = $client;
         $this->filesystem = $filesystem;
@@ -89,14 +87,14 @@ class send_video extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
-        $openveovideoid = $this->send_video($this->filesystem->get_local_path($this->originalvideo));
+        $openveovideoid = $this->send_video($this->filesystem->get_local_path($this->originalvideo->get_file()));
 
         if (!isset($openveovideoid)) {
             return false;
         }
 
         // Add the id of the video on OpenVeo to the video object. It could be useful to other transitions.
-        $this->originalvideo->tomopenveoid = $openveovideoid;
+        $this->originalvideo->set_openveo_id($openveovideoid);
         return true;
     }
 
@@ -116,19 +114,21 @@ class send_video extends video_transition {
      * @return string The id of the video on OpenVeo or null if something went wrong
      */
     protected function send_video(string $videopath) {
+        $videofile = $this->originalvideo->get_file();
+
         try {
             $response = $this->client->post('/publish/videos', array(
               'file' => curl_file_create($videopath),
               'info' => json_encode(array(
-                'title' => $this->originalvideo->get_filename(),
-                'date' => $this->originalvideo->get_timecreated() * 1000,
+                'title' => $videofile->get_filename(),
+                'date' => $videofile->get_timecreated() * 1000,
                 'platform' => $this->platform
               ))
             ));
 
             if (isset($response->error)) {
                 $this->send_sending_video_failed_event(
-                        $this->originalvideo->get_id(),
+                        $videofile->get_id(),
                         $response->error->code,
                         $response->error->module
                 );

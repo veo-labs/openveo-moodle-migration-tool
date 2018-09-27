@@ -27,8 +27,8 @@ namespace tool_openveo_migration\local\transitions;
 defined('MOODLE_INTERNAL') || die();
 
 use Exception;
-use stored_file;
 use context_system;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\event\publishing_openveo_video_failed;
 use Openveo\Client\Client;
@@ -37,8 +37,6 @@ use Openveo\Client\Client;
  * Defines transition to publish an OpenVeo video.
  *
  * Transition succeeds if publishing the OpenVeo video succeeded.
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -56,10 +54,10 @@ class publish_openveo_video extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param Openveo\Client\Client $client The OpenVeo web service client
      */
-    public function __construct(stored_file &$video, Client $client) {
+    public function __construct(registered_video &$video, Client $client) {
         parent::__construct($video);
         $this->client = $client;
     }
@@ -70,11 +68,12 @@ class publish_openveo_video extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
-        if (!isset($this->originalvideo->tomopenveoid)) {
+        $openveoid = $this->originalvideo->get_openveo_id();
+        if (!isset($openveoid)) {
             return false;
         }
 
-        if (!$this->publish_openveo_video($this->originalvideo->tomopenveoid)) {
+        if (!$this->publish_openveo_video($openveoid)) {
             return false;
         }
 

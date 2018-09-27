@@ -27,10 +27,10 @@ namespace tool_openveo_migration\local\transitions;
 defined('MOODLE_INTERNAL') || die();
 
 use Exception;
-use stored_file;
 use context_system;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\local\videos_provider;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\creating_reference_failed;
 
 /**
@@ -39,8 +39,6 @@ use tool_openveo_migration\event\creating_reference_failed;
  * This transition creates the new Moodle references pointing to the OpenVeo video. It also creates a new reference for all Moodle
  * alisaes which were pointing to the original video.
  * Transition succeeds if new references have been successfully created for the original video and all its aliases.
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -65,11 +63,11 @@ class create_new_references extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param tool_openveo_migration\local\videos_provider $videosprovider The videos provider
      * @param int $openveorepositoryid The id of the OpenVeo repository instance to associate new references to
      */
-    public function __construct(stored_file &$video, videos_provider $videosprovider, int $openveorepositoryid) {
+    public function __construct(registered_video &$video, videos_provider $videosprovider, int $openveorepositoryid) {
         parent::__construct($video);
         $this->videosprovider = $videosprovider;
         $this->openveorepositoryid = $openveorepositoryid;
@@ -83,54 +81,59 @@ class create_new_references extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
-        $this->originalvideo->tomnewreferences = array();
+        $newreferences = array();
+        $openveoid = $this->originalvideo->get_openveo_id();
+        $videofile = $this->originalvideo->get_file();
 
-        if (!isset($this->originalvideo->tomopenveoid)) {
+        if (!isset($openveoid)) {
             return false;
         }
 
         // Create a reference into Moodle pointing to the external OpenVeo video.
         $newreference = $this->create_video_reference(
                 array(
-                    'contextid' => $this->originalvideo->get_contextid(),
-                    'component' => $this->originalvideo->get_component(),
-                    'filearea' => $this->originalvideo->get_filearea(),
-                    'itemid' => $this->originalvideo->get_itemid(),
-                    'filepath' => $this->originalvideo->get_filepath(),
-                    'filename' => $this->originalvideo->get_filename(),
-                    'userid' => $this->originalvideo->get_userid(),
-                    'mimetype' => $this->originalvideo->get_mimetype(),
-                    'status' => $this->originalvideo->get_status(),
-                    'author' => $this->originalvideo->get_author(),
-                    'license' => $this->originalvideo->get_license(),
-                    'timecreated' => $this->originalvideo->get_timecreated(),
-                    'timemodified' => $this->originalvideo->get_timemodified(),
-                    'sortorder' => $this->originalvideo->get_sortorder()
+                    'contextid' => $videofile->get_contextid(),
+                    'component' => $videofile->get_component(),
+                    'filearea' => $videofile->get_filearea(),
+                    'itemid' => $videofile->get_itemid(),
+                    'filepath' => $videofile->get_filepath(),
+                    'filename' => $videofile->get_filename(),
+                    'userid' => $videofile->get_userid(),
+                    'mimetype' => $videofile->get_mimetype(),
+                    'status' => $videofile->get_status(),
+                    'author' => $videofile->get_author(),
+                    'license' => $videofile->get_license(),
+                    'timecreated' => $videofile->get_timecreated(),
+                    'timemodified' => $videofile->get_timemodified(),
+                    'sortorder' => $videofile->get_sortorder()
                 ),
                 $this->openveorepositoryid,
-                $this->originalvideo->tomopenveoid
+                $openveoid
         );
         if (!$newreference) {
             return false;
         }
-        $this->originalvideo->tomnewreferences[] = $newreference;
+        $newreferences[] = $newreference;
+        $this->originalvideo->set_new_references($newreferences);
 
-        if (isset($this->originalvideo->tomaliases)) {
+        $aliases = $this->originalvideo->get_aliases();
+        if (isset($aliases)) {
 
             // Original video got aliases.
 
             // For each Moodle aliases pointing to the original video, create a new reference pointing to the new external OpenVeo
             // video.
-            foreach ($this->originalvideo->tomaliases as $alias) {
+            foreach ($aliases as $alias) {
                 $newreference = $this->create_video_reference(
                         $alias,
                         $this->openveorepositoryid,
-                        $this->originalvideo->tomopenveoid
+                        $openveoid
                 );
                 if (!isset($newreference)) {
                     return false;
                 }
-                $this->originalvideo->tomnewreferences[] = $newreference;
+                $newreferences[] = $newreference;
+                $this->originalvideo->set_new_references($newreferences);
             }
 
         }
@@ -164,7 +167,7 @@ class create_new_references extends video_transition {
             $videoreference = $this->videosprovider->create_video_reference($record, $repositoryid, $openveovideoid);
             return $videoreference;
         } catch(Exception $e) {
-            $this->send_creating_reference_failed($originalvideo->get_id(), $e->getMessage());
+            $this->send_creating_reference_failed($this->originalvideo->get_file()->get_id(), $e->getMessage());
             return false;
         }
     }

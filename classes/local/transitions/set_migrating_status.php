@@ -27,11 +27,11 @@ namespace tool_openveo_migration\local\transitions;
 defined('MOODLE_INTERNAL') || die();
 
 use Exception;
-use stored_file;
 use context_system;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\local\videos_provider;
 use tool_openveo_migration\local\statuses;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\updating_video_migration_status_failed;
 
 /**
@@ -55,10 +55,10 @@ class set_migrating_status extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param videos_provider $videosprovider The videos provider
      */
-    public function __construct(stored_file &$video, videos_provider $videosprovider) {
+    public function __construct(registered_video &$video, videos_provider $videosprovider) {
         parent::__construct($video);
         $this->videosprovider = $videosprovider;
     }
@@ -73,7 +73,7 @@ class set_migrating_status extends video_transition {
             $this->videosprovider->update_video_migration_status($this->originalvideo, statuses::MIGRATING);
         } catch (Exception $e) {
             $this->send_updating_video_migration_status_failed_event(
-                    $this->originalvideo->get_id(),
+                    $this->originalvideo->get_file()->get_id(),
                     statuses::MIGRATING,
                     $e->getMessage()
             );

@@ -27,9 +27,9 @@ namespace tool_openveo_migration\local\transitions;
 defined('MOODLE_INTERNAL') || die();
 
 use Exception;
-use stored_file;
 use context_system;
 use tool_openveo_migration\local\videos_provider;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\event\verifying_video_failed;
 
@@ -54,10 +54,10 @@ class verify_video extends video_transition {
     /**
      * Builds transition.
      *
-     * @param stored_file $video The Moodle video file to migrate
+     * @param registered_video $video The registered video to migrate
      * @param tool_openveo_migration\local\videos_provider $videosprovider The videos provider
      */
-    public function __construct(stored_file &$video, videos_provider $videosprovider) {
+    public function __construct(registered_video &$video, videos_provider $videosprovider) {
         parent::__construct($video);
         $this->videosprovider = $videosprovider;
     }
@@ -68,15 +68,17 @@ class verify_video extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
+        $videofile = $this->originalvideo->get_file();
+
         try {
-            $video = $this->videosprovider->get_video_by_id($this->originalvideo->get_id());
+            $video = $this->videosprovider->get_video_by_id($videofile->get_id());
         } catch(Exception $e) {
-            $this->send_verifying_video_failed_event($this->originalvideo->get_id(), $e->getMessage());
+            $this->send_verifying_video_failed_event($videofile->get_id(), $e->getMessage());
             return false;
         }
 
         if (empty($video)) {
-            $this->send_verifying_video_failed_event($this->originalvideo->get_id(), 'Video not found');
+            $this->send_verifying_video_failed_event($videofile->get_id(), 'Video not found');
             return false;
         }
 

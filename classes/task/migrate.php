@@ -41,6 +41,7 @@ use Openveo\Client\Client;
 use Openveo\Exception\ClientException;
 use tool_openveo_migration\local\statuses;
 use tool_openveo_migration\local\states;
+use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\local\videos_provider;
 use tool_openveo_migration\local\file_system;
 use tool_openveo_migration\local\video_machine;
@@ -54,9 +55,6 @@ use tool_openveo_migration\event\video_migration_failed;
 
 /**
  * Defines Moodle migrate task to migrate Moodle videos to OpenVeo.
- *
- * Properties of a stored_file instance prefixed by "tom" are properties added by the OpenVeo Migration Tool. "tom" stands for
- * "Tool OpenVeo Migration".
  *
  * @package tool_openveo_migration
  * @copyright 2018 Veo-labs
@@ -146,7 +144,8 @@ class migrate extends scheduled_task {
 
             // Got the video to migrate.
 
-            $this->send_video_migration_started_event($video->get_id(), $video->get_filename());
+            $videoid = $video->get_file()->get_id();
+            $this->send_video_migration_started_event($videoid, $video->get_file()->get_filename());
 
             // Migrate video using states machine.
             try {
@@ -162,12 +161,12 @@ class migrate extends scheduled_task {
                     $openveorepositoryid
                 );
                 if (!$machine->execute()) {
-                    $this->send_video_migration_failed_event($video->get_id(), $video->get_filename());
+                    $this->send_video_migration_failed_event($videoid, $video->get_filename());
                 } else {
-                    $this->send_video_migration_ended_event($video->get_id(), $video->get_filename());
+                    $this->send_video_migration_ended_event($videoid, $video->get_filename());
                 }
             } catch(Exception $e) {
-                $this->send_video_migration_failed_event($video->get_id(), $video->get_filename());
+                $this->send_video_migration_failed_event($videoid, $video->get_filename());
             }
 
         }
@@ -257,9 +256,7 @@ class migrate extends scheduled_task {
                     // Add the migration id, the migration status and the migration state to the video.
                     try {
                         $migrationid = $this->videosprovider->plan_video($video);
-                        $video->tommigrationid = $migrationid;
-                        $video->tomstatus = statuses::PLANNED;
-                        $video->tomstate = states::NOT_INITIALIZED;
+                        $video = new registered_video($video, $migrationid, statuses::PLANNED, states::NOT_INITIALIZED);
                     } catch (Exception $e) {
                         $this->send_planning_video_failed_event(
                                 $video->get_id(),
