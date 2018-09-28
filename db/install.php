@@ -68,7 +68,7 @@ define('DEFAULT_FILE_FIELDS',
         // Supported methods: FILE_INTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
         "core_competency|userevidence|14\n" .
 
-        // Prerequisites: Authorize .openveo files in administration > appearance > courses > course summary files
+        // Prerequisites: Authorize .mp4 files in administration > appearance > courses > course summary files
         //                extensions
         // Field location: course > edition > course summary files
         // Display location: category holding the course
@@ -97,7 +97,7 @@ define('DEFAULT_FILE_FIELDS',
         "coursecat|description|15\n" .
 
         // Prerequisites: Enable outcomes in administration > advanced features > enable outcomes
-        // Field location: course > outcomes > edit outcomes > add a new outcome > description
+        // Field location: course > grades > outcomes > edit outcomes > add a new outcome > description
         // Display location: It doesn't seem to be displayed but it is added to outcomes CSV export
         // User: Administrator for prerequisites and course editor for edition and display
         // Supported methods: FILE_INTERNAL|FILE_EXTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
@@ -376,13 +376,13 @@ define('DEFAULT_FILE_FIELDS',
         // Supported methods: FILE_INTERNAL|FILE_EXTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
         "mod_workshop|intro|15\n" .
 
-        // Field location: course > quiz > question bank > edition > general feedback
+        // Field location: course > quiz module > question bank > edition > general feedback
         // Display location: course > quiz module and submit quiz
         // User: Course editor for edition and enrolled user for display
         // Supported methods: FILE_INTERNAL|FILE_EXTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
         "question|generalfeedback|15\n" .
 
-        // Field location: course > quiz > question bank > edition > question text
+        // Field location: course > quiz module > question bank > edition > question text
         // Display location: course > quiz module and submit quiz
         // User: Course editor for edition and enrolled user for display
         // Supported methods: FILE_INTERNAL|FILE_EXTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
