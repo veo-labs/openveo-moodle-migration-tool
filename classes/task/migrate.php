@@ -202,15 +202,21 @@ class migrate extends scheduled_task {
     protected function generate_videos_to_migrate(array $acceptedmimetypes, array $filefields,
                                                   bool $automaticmigrationactivated = false) : Generator {
 
-        // Get the first video from tool_openveo_migration table with status "planned".
-        try {
-            $video = $this->videosprovider->get_registered_video_by_status(statuses::PLANNED);
-        } catch (Exception $e) {
-            $this->send_getting_registered_video_failed_event($e->getMessage());
-        }
+        $hasvideo = true;
+        while ($hasvideo) {
 
-        if (isset($video)) {
-            yield $video;
+            // Get the first video from tool_openveo_migration table with status "planned".
+            try {
+                $video = $this->videosprovider->get_registered_video_by_status(statuses::PLANNED);
+            } catch (Exception $e) {
+                $this->send_getting_registered_video_failed_event($e->getMessage());
+            }
+
+            if (isset($video)) {
+                yield $video;
+            } else {
+                $hasvideo = false;
+            }
         }
 
         if (!$automaticmigrationactivated) {
