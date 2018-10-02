@@ -145,10 +145,11 @@ class settings_page implements renderable, templatable {
             $videotypestomigrate = $filetypesutil->normalize_file_types($data->videotypestomigrate);
             $videotypestomigrate = implode(' ', $videotypestomigrate);
             $statuspollingfrequency = !empty($data->statuspollingfrequency) ? $data->statuspollingfrequency : null;
+            $automaticmigrationactivated = isset($data->automaticmigrationactivated) ? $data->automaticmigrationactivated : false;
 
             // Save configuration to database.
             set_config('videotypestomigrate', $videotypestomigrate, 'tool_openveo_migration');
-            set_config('automaticmigrationactivated', $data->automaticmigrationactivated, 'tool_openveo_migration');
+            set_config('automaticmigrationactivated', $automaticmigrationactivated, 'tool_openveo_migration');
             set_config('destinationplatform', $data->destinationplatform, 'tool_openveo_migration');
             set_config('statuspollingfrequency', $statuspollingfrequency, 'tool_openveo_migration');
             set_config('filefields', $data->filefields, 'tool_openveo_migration');
