@@ -81,6 +81,26 @@ class videos_provider {
     }
 
     /**
+     * Gets the contexts where appears a Moodle video file.
+     *
+     * @param stored_file $video The original video
+     * @return array The list of context ids
+     * @throws dml_exception A DML specific exception is thrown for any errors
+     */
+    public function get_video_contexts(stored_file $video) : array {
+        $contextids = array();
+
+        // Find where the video and its aliases are used.
+        $contextids[] = $video->get_contextid();
+        $aliases = $this->get_video_aliases($video);
+        foreach ($aliases as $id => $alias) {
+            $contextids[] = $alias->get_contextid();
+        }
+
+        return $contextids;
+    }
+
+    /**
      * Gets a registered video by its migration status.
      *
      * The first video found in tool_openveo_migration table, with the expected status, will be returned.
@@ -111,7 +131,7 @@ class videos_provider {
                 intval($registeredvideo->status),
                 intval($registeredvideo->state),
                 $registeredvideo->filename,
-                array($registeredvideo->contextid),
+                explode(',', $registeredvideo->contextids),
                 $registeredvideo->timecreated,
                 $registeredvideo->mimetype
         );
@@ -213,7 +233,7 @@ class videos_provider {
                 SELECT f.id, f.contenthash, f.pathnamehash, f.contextid, f.component, f.filearea, f.itemid, f.filepath,
                         f.filename, f.userid, f.filesize, f.mimetype, f.status, f.source, f.author, f.license, f.timecreated,
                         f.timemodified, f.sortorder, f.referencefileid, tom.id as tommigrationid, tom.status as tomstatus,
-                        tom.state as tomstate, tom.filename as tomfilename, tom.contextid as tomcontextid
+                        tom.state as tomstate, tom.filename as tomfilename, tom.contextids as tomcontextids
                 FROM {files} f
                 LEFT JOIN {tool_openveo_migration} tom ON f.id = tom.filesid
 
@@ -222,7 +242,7 @@ class videos_provider {
                 SELECT CONCAT('tom-', tom.id) as id, f.contenthash, f.pathnamehash, f.contextid, f.component, f.filearea,
                         f.itemid, f.filepath, f.filename, f.userid, f.filesize, tom.mimetype, f.status, f.source, f.author,
                         f.license, tom.timecreated, f.timemodified, f.sortorder, f.referencefileid, tom.id as tommigrationid,
-                        tom.status as tomstatus, tom.state as tomstate, tom.filename as tomfilename, tom.contextid as tomcontextid
+                        tom.status as tomstatus, tom.state as tomstate, tom.filename as tomfilename, tom.contextids as tomcontextids
                 FROM {tool_openveo_migration} tom
                 LEFT JOIN {files} f ON f.id = tom.filesid
                 WHERE f.id IS NULL
@@ -273,26 +293,20 @@ class videos_provider {
                 $contextids = array();
                 $file = null;
 
-                if (isset($video->contenthash)) {
+                if (isset($video->contenthash) && !isset($video->tomcontextids)) {
 
-                    // Video has a corresponding Moodle file.
+                    // Video has a corresponding Moodle file but is not registered yet.
                     // Retrieve it.
                     $file = $this->filestorage->get_file_by_id($id);
 
                     // Find where the video and its aliases are used.
-                    $contextids[] = $video->contextid;
-                    $aliases = $this->get_video_aliases($file);
-                    foreach ($aliases as $id => $alias) {
-                        $contextids[] = $alias->get_contextid();
-                    }
+                    $contextids = $this->get_video_contexts($file);
 
-                } else {
+                } else if (isset($video->tomcontextids)) {
 
                     // Video has no corresponding Moodle file.
                     // Video has been migrated.
-                    if (isset($video->tomcontextid)) {
-                        $contextids[] = $video->tomcontextid;
-                    }
+                    $contextids = explode(',', $video->tomcontextids);
 
                 }
 
@@ -316,19 +330,33 @@ class videos_provider {
      * It adds a new record to the tool_openveo_migration table with status "planned".
      *
      * @param stored_file $video The video to plan
-     * @return int The migration id
+     * @return registered_video The new registered video
      * @throws dml_exception A DML specific exception is thrown for any errors
      */
-    public function plan_video(stored_file $video) : int {
+    public function plan_video(stored_file $video) : registered_video {
+        $contextids = $this->get_video_contexts($video);
+
         $record = new stdClass();
         $record->filesid = $video->get_id();
         $record->status = statuses::PLANNED;
         $record->state = states::NOT_INITIALIZED;
         $record->filename = $video->get_filename();
-        $record->contextid = $video->get_contextid();
+        $record->contextids = implode(',', $contextids);
         $record->timecreated = $video->get_timecreated();
         $record->mimetype = $video->get_mimetype();
-        return $this->database->insert_record('tool_openveo_migration', $record);
+
+        $id = $this->database->insert_record('tool_openveo_migration', $record);
+
+        return new registered_video(
+                $video,
+                $id,
+                $record->status,
+                $record->state,
+                $record->filename,
+                $contextids,
+                $record->timecreated,
+                $record->mimetype
+        );
     }
 
     /**
@@ -348,7 +376,7 @@ class videos_provider {
             $record->status = statuses::PLANNED;
             $record->state = states::NOT_INITIALIZED;
             $record->filename = $video->get_filename();
-            $record->contextid = $video->get_contextid();
+            $record->contextids = implode(',', $this->get_video_contexts($video));
             $record->timecreated = $video->get_timecreated();
             $record->mimetype = $video->get_mimetype();
             $records[] = $record;

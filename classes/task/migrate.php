@@ -261,17 +261,7 @@ class migrate extends scheduled_task {
                     // Add video to planned videos.
                     // Add the migration id, the migration status and the migration state to the video.
                     try {
-                        $migrationid = $this->videosprovider->plan_video($video);
-                        $video = new registered_video(
-                                $video,
-                                $migrationid,
-                                statuses::PLANNED,
-                                states::NOT_INITIALIZED,
-                                $video->get_filename(),
-                                array($video->get_contextid()),
-                                $video->get_timecreated(),
-                                $video->get_mimetype()
-                        );
+                        $video = $this->videosprovider->plan_video($video);
                     } catch (Exception $e) {
                         $this->send_planning_video_failed_event(
                                 $video->get_id(),

@@ -72,20 +72,11 @@ class set_migrated_status extends video_transition {
      * @return bool true if transition succeeded, false if something went wrong
      */
     public function execute() : bool {
-        $videofile = $this->originalvideo->get_file();
-
         try {
-            $data = new stdClass();
-            $data->id = $this->originalvideo->get_id();
-            $data->status = statuses::MIGRATED;
-            $data->filename = $videofile->get_filename();
-            $data->contextid = $videofile->get_contextid();
-            $data->timecreated = $videofile->get_timecreated();
-            $data->mimetype = $videofile->get_mimetype();
-            $this->videosprovider->update_registered_video($data);
+            $this->videosprovider->update_video_migration_status($this->originalvideo, statuses::MIGRATED);
         } catch (Exception $e) {
             $this->send_updating_video_migration_status_failed_event(
-                    $videofile->get_id(),
+                    $this->originalvideo->get_file()->get_id(),
                     statuses::MIGRATED,
                     $e->getMessage()
             );
