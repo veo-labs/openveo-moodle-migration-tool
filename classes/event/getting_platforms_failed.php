@@ -63,7 +63,7 @@ class getting_platforms_failed extends base {
      * @return string The description of what happened
      */
     public function get_description() : string {
-        return "Failed to get video platforms (code={$this->other['code']}, module={$this->other['module']}).";
+        return "Failed to get video platforms with message: {$this->other['message']}.";
     }
 
     /**

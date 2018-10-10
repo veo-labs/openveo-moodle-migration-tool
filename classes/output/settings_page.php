@@ -39,7 +39,7 @@ use moodle_exception;
 use core_form\filetypes_util;
 use Openveo\Client\Client;
 use Openveo\Exception\ClientException;
-use local_openveo_api\event\connection_failed;
+use local_openveo_api\event\requesting_openveo_failed;
 use tool_openveo_migration\event\getting_platforms_failed;
 
 /**
@@ -180,29 +180,43 @@ class settings_page implements renderable, templatable {
     protected function get_openveo_platforms() : array {
         try {
             $response = $this->client->get('publish/platforms');
-
-            if (isset($response->error)) {
-                $event = getting_platforms_failed::create(array(
-                    'context' => context_system::instance(),
-                    'other' => array(
-                        'code' => $response->error->code,
-                        'module' => $response->error->module
-                    )
-                ));
-                $event->trigger();
-            }
-
             return isset($response->platforms) ? $response->platforms : array();
+        } catch(ClientException $e) {
+            $this->send_getting_platforms_failed_event($e->getMessage());
         } catch(Exception $e) {
-            $event = connection_failed::create(array(
-                'context' => context_system::instance(),
-                'other' => array(
-                    'message' => $e->getMessage()
-                )
-            ));
-            $event->trigger();
-            return array();
+            $this->send_requesting_openveo_failed_event($e->getMessage());
         }
+        return array();
+    }
+
+    /**
+     * Sends a "requesting_openveo_failed" event.
+     *
+     * @param string $message The error message
+     */
+    protected function send_requesting_openveo_failed_event(string $message) {
+        $event = requesting_openveo_failed::create(array(
+            'context' => context_system::instance(),
+            'other' => array(
+                'message' => $message
+            )
+        ));
+        $event->trigger();
+    }
+
+    /**
+     * Sends a "getting_platforms_failed" event.
+     *
+     * @param string $message The error message
+     */
+    protected function send_getting_platforms_failed_event(string $message) {
+        $event = getting_platforms_failed::create(array(
+            'context' => context_system::instance(),
+            'other' => array(
+                'message' => $message
+            )
+        ));
+        $event->trigger();
     }
 
 }

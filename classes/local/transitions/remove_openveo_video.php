@@ -33,6 +33,7 @@ use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\event\removing_openveo_video_failed;
 use tool_openveo_migration\event\getting_openveo_video_failed;
 use Openveo\Client\Client;
+use Openveo\Exception\ClientException;
 
 /**
  * Defines a transition to remove an OpenVeo video.
@@ -112,10 +113,7 @@ class remove_openveo_video extends video_transition {
         try {
             $response = $this->client->get("/publish/videos/$id");
 
-            if (isset($response->error)) {
-                $this->send_getting_openveo_video_failed_event($id, $response->error->code, $response->error->module);
-                return false;
-            } else if (isset($response->entity) &&
+            if (isset($response->entity) &&
                         $response->entity->state !== 0 && // ERROR
                         $response->entity->state !== 6 && // WAITING FOR UPLOAD
                         $response->entity->state !== 11 && // READY
@@ -129,10 +127,12 @@ class remove_openveo_video extends video_transition {
             }
 
             return isset($response->entity) ? true : false;
+        } catch(ClientException $e) {
+            $this->send_getting_openveo_video_failed_event($id, $e->getMessage());
         } catch(Exception $e) {
-            $this->send_connection_failed_event($e->getMessage());
-            return false;
+            $this->send_requesting_openveo_failed_event($e->getMessage());
         }
+        return false;
     }
 
     /**
@@ -144,32 +144,27 @@ class remove_openveo_video extends video_transition {
     protected function remove_openveo_video(string $id) : bool {
         try {
             $response = $this->client->delete("/publish/videos/$id");
-
-            if (isset($response->error)) {
-                $this->send_removing_openveo_video_failed_event($id, $response->error->code, $response->error->module);
-            }
-
             return isset($response->total) ? true : false;
+        } catch(ClientException $e) {
+            $this->send_removing_openveo_video_failed_event($id, $e->getMessage());
         } catch(Exception $e) {
-            $this->send_connection_failed_event($e->getMessage());
-            return false;
+            $this->send_requesting_openveo_failed_event($e->getMessage());
         }
+        return false;
     }
 
     /**
      * Sends a "removing_openveo_video_failed" event.
      *
      * @param string $id The OpenVeo video id
-     * @param int $code The error code
-     * @param string $module The module responsible of the error
+     * @param string $message The error message
      */
-    protected function send_removing_openveo_video_failed_event(string $id, int $code, string $module) {
+    protected function send_removing_openveo_video_failed_event(string $id, string $message) {
         $event = removing_openveo_video_failed::create(array(
             'context' => context_system::instance(),
             'other' => array(
                 'id' => $id,
-                'code' => $code,
-                'module' => $module
+                'message' => $message
             )
         ));
         $event->trigger();
@@ -179,16 +174,14 @@ class remove_openveo_video extends video_transition {
      * Sends a "getting_openveo_video_failed" event.
      *
      * @param string $id The OpenVeo video id
-     * @param int $code The error code
-     * @param string $module The module responsible of the error
+     * @param string $message The error message
      */
-    protected function send_getting_openveo_video_failed_event(string $id, int $code, string $module) {
+    protected function send_getting_openveo_video_failed_event(string $id, string $message) {
         $event = getting_openveo_video_failed::create(array(
             'context' => context_system::instance(),
             'other' => array(
                 'id' => $id,
-                'code' => $code,
-                'module' => $module
+                'message' => $message
             )
         ));
         $event->trigger();

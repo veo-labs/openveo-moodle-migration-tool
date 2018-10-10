@@ -62,8 +62,7 @@ class publishing_openveo_video_failed extends base {
      * @return string The description of what happened
      */
     public function get_description() : string {
-        return "Failed to publish OpenVeo video {$this->other['id']} " .
-               "(code={$this->other['code']}, module={$this->other['module']}).";
+        return "Failed to publish OpenVeo video {$this->other['id']} with message: {$this->other['message']}.";
     }
 
 }

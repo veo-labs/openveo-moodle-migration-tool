@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use context_system;
 use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\local\machine\transition;
-use tool_openveo_migration\event\connection_failed;
+use tool_openveo_migration\event\requesting_openveo_failed;
 
 /**
  * Defines the common part of all video machine transitions.
@@ -57,12 +57,12 @@ abstract class video_transition extends transition {
     }
 
     /**
-     * Sends a "connection_failed" event.
+     * Sends a "requesting_openveo_failed" event.
      *
      * @param string $message The error message
      */
-    protected function send_connection_failed_event(string $message) {
-        $event = connection_failed::create(array(
+    protected function send_requesting_openveo_failed_event(string $message) {
+        $event = requesting_openveo_failed::create(array(
             'context' => context_system::instance(),
             'other' => array(
                 'message' => $message

@@ -33,6 +33,7 @@ use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\event\getting_openveo_video_failed;
 use tool_openveo_migration\event\waiting_for_openveo_video_failed;
 use Openveo\Client\Client;
+use Openveo\Exception\ClientException;
 
 /**
  * Defines transition to wait for a video until it has been fully treated by OpenVeo.
@@ -117,10 +118,7 @@ class wait_for_openveo_video extends video_transition {
         try {
             $response = $this->client->get("/publish/videos/$id");
 
-            if (isset($response->error)) {
-                $this->send_getting_openveo_video_failed_event($id, $response->error->code, $response->error->module);
-                return false;
-            } else if (isset($response->entity) &&
+            if (isset($response->entity) &&
                         ($response->entity->state === 0 || // ERROR
                          $response->entity->state === 6    // WAITING FOR UPLOAD
                       )) {
@@ -139,26 +137,26 @@ class wait_for_openveo_video extends video_transition {
             }
 
             return isset($response->entity) ? $response->entity->state : null;
+        } catch(ClientException $e) {
+            $this->send_getting_openveo_video_failed_event($id, $e->getMessage());
         } catch(Exception $e) {
-            $this->send_connection_failed_event($e->getMessage());
-            return null;
+            $this->send_requesting_openveo_failed_event($e->getMessage());
         }
+        return null;
     }
 
     /**
      * Sends a "getting_openveo_video_failed" event.
      *
      * @param string $id The OpenVeo video id
-     * @param int $code The error code
-     * @param string $module The module responsible of the error
+     * @param string $message The error message
      */
-    protected function send_getting_openveo_video_failed_event(string $id, int $code, string $module) {
+    protected function send_getting_openveo_video_failed_event(string $id, string $message) {
         $event = getting_openveo_video_failed::create(array(
             'context' => context_system::instance(),
             'other' => array(
                 'id' => $id,
-                'code' => $code,
-                'module' => $module
+                'message' => $message
             )
         ));
         $event->trigger();

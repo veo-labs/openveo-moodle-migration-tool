@@ -62,8 +62,7 @@ class sending_video_failed extends base {
      * @return string The description of what happened
      */
     public function get_description() : string {
-        return "Failed to send video {$this->other['id']} to OpenVeo (code={$this->other['code']}, " .
-                "module={$this->other['module']}).";
+        return "Failed to send video {$this->other['id']} to OpenVeo with message: {$this->other['message']}.";
     }
 
 }

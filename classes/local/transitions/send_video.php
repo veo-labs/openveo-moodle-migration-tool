@@ -33,6 +33,7 @@ use tool_openveo_migration\local\file_system;
 use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\sending_video_failed;
 use Openveo\Client\Client;
+use Openveo\Exception\ClientException;
 
 /**
  * Defines a transition to send the Moodle video file to OpenVeo.
@@ -126,35 +127,27 @@ class send_video extends video_transition {
               ))
             ));
 
-            if (isset($response->error)) {
-                $this->send_sending_video_failed_event(
-                        $videofile->get_id(),
-                        $response->error->code,
-                        $response->error->module
-                );
-            }
-
             return isset($response->id) ? $response->id : null;
+        } catch(ClientException $e) {
+            $this->send_sending_video_failed_event($videofile->get_id(), $e->getMessage());
         } catch(Exception $e) {
-            $this->send_connection_failed_event($e->getMessage());
-            return null;
+            $this->send_requesting_openveo_failed_event($e->getMessage());
         }
+        return null;
     }
 
     /**
      * Sends a "sending_video_failed" event.
      *
      * @param int $id The id of the video on error
-     * @param string $code The error code
-     * @param string $module The module responsible of the error
+     * @param string $message The error message
      */
-    protected function send_sending_video_failed_event(int $id, int $code, string $module) {
+    protected function send_sending_video_failed_event(int $id, string $message) {
         $event = sending_video_failed::create(array(
             'context' => context_system::instance(),
             'other' => array(
                 'id' => $id,
-                'code' => $code,
-                'module' => $module
+                'message' => $message
             )
         ));
         $event->trigger();
