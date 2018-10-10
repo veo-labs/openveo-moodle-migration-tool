@@ -241,7 +241,7 @@ define('DEFAULT_FILE_FIELDS',
         // Supported methods: FILE_INTERNAL|FILE_EXTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
         "mod_label|intro|15\n" .
 
-        // Field location: course > lesson module > grade essays > click on the data of an essay > your comments
+        // Field location: course > lesson module > grade essays > click on the date of an essay > your comments
         // Display location: It doesn't seem to be displayed
         // User: Course editor
         // Supported methods: FILE_INTERNAL|FILE_EXTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
