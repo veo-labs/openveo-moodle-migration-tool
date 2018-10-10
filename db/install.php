@@ -97,7 +97,7 @@ define('DEFAULT_FILE_FIELDS',
         "coursecat|description|15\n" .
 
         // Prerequisites: Enable outcomes in administration > advanced features > enable outcomes
-        // Field location: course > grades > outcomes > edit outcomes > add a new outcome > description
+        // Field location: course > outcomes > edit outcomes > add a new outcome > description
         // Display location: It doesn't seem to be displayed but it is added to outcomes CSV export
         // User: Administrator for prerequisites and course editor for edition and display
         // Supported methods: FILE_INTERNAL|FILE_EXTERNAL|FILE_REFERENCE|FILE_CONTROLLED_LINK
