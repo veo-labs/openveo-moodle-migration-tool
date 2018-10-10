@@ -32,7 +32,6 @@ use tool_openveo_migration\local\transitions\video_transition;
 use tool_openveo_migration\local\videos_provider;
 use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\event\removing_original_aliases_failed;
-use Openveo\Client\Client;
 
 /**
  * Defines a transition to remove original video aliases referencing the original video.
