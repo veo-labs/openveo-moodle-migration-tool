@@ -137,7 +137,6 @@ $string['eventremovingreferencesfailed'] = 'Suppression références video écho
 $string['eventremovingoriginalfailed'] = 'Suppression vidéo originale échouée';
 $string['eventremovingoriginalaliasesfailed'] = 'Suppression alias vidéo originale échouée';
 $string['eventremovingdraftfilesfailed'] = 'Suppression fichiers brouillons échouée';
-$string['eventrequestingopenveofailed'] = 'Requête à OpenVeo échouée';
 $string['eventrestoringoriginalfailed'] = 'Récupération vidéo originale échouée';
 $string['eventrestoringoriginalaliasesfailed'] = 'Récupération alias vidéo originale échouée';
 $string['eventupdatingregisteredvideoidfailed'] = 'Modification id vidéo planifiée échouée';

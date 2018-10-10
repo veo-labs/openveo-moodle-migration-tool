@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use context_system;
 use tool_openveo_migration\local\registered_video;
 use tool_openveo_migration\local\machine\transition;
-use tool_openveo_migration\event\requesting_openveo_failed;
+use local_openveo_api\event\requesting_openveo_failed;
 
 /**
  * Defines the common part of all video machine transitions.

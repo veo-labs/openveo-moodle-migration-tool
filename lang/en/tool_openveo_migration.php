@@ -137,7 +137,6 @@ $string['eventremovingreferencesfailed'] = 'Removing video references failed';
 $string['eventremovingoriginalfailed'] = 'Removing original video failed';
 $string['eventremovingoriginalaliasesfailed'] = 'Removing original video aliases failed';
 $string['eventremovingdraftfilesfailed'] = 'Removing video draft files failed';
-$string['eventrequestingopenveofailed'] = 'Requesting OpenVeo failed';
 $string['eventrestoringoriginalfailed'] = 'Restoring original video failed';
 $string['eventrestoringoriginalaliasesfailed'] = 'Restoring original video aliases failed';
 $string['eventupdatingregisteredvideoidfailed'] = 'Updating registered video id failed';
