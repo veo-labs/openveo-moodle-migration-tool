@@ -84,6 +84,10 @@ class settings_form extends moodleform {
         }
 
         // Destination platform.
+        array_unshift($this->_customdata['destinationplatform']['options'], get_string(
+                "settingsdestinationplatformchoose",
+                'tool_openveo_migration'
+        ));
         $this->_form->addElement(
                 'select',
                 'destinationplatform',

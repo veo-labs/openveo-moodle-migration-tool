@@ -41,6 +41,7 @@ $string['settingsautomaticmigrationactivated_help'] = 'Activer la migration auto
 $string['settingsdestinationplatformlabel'] = 'Plateforme vidéos';
 $string['settingsdestinationplatform'] = 'Plateforme vidéos';
 $string['settingsdestinationplatform_help'] = 'Choisissez une plateforme vidéos pour les vidéos à migrer. OpenVeo peut stocker les vidéos sur différentes plateformes.';
+$string['settingsdestinationplatformchoose'] = 'Choisir...';
 $string['settingsdestinationplatformlocal'] = 'OpenVeo';
 $string['settingsdestinationplatformyoutube'] = 'Youtube';
 $string['settingsdestinationplatformvimeo'] = 'Vimeo';
