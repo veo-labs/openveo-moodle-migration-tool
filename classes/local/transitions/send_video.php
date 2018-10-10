@@ -68,18 +68,27 @@ class send_video extends video_transition {
     protected $platform;
 
     /**
+     * The cURL upload timeout in seconds.
+     *
+     * @var string
+     */
+    protected $uploadcurltimeout;
+
+    /**
      * Builds transition.
      *
      * @param registered_video $video The registered video to migrate
      * @param Openveo\Client\Client $client The OpenVeo web service client
      * @param tool_openveo_migration\local\file_system $filesystem The file system instance
      * @param string $platform The videos platform to upload to (see OpenVeo Publish documentation)
+     * @param int $uploadcurltimeout The cURL upload timeout in seconds (default to 3600)
      */
-    public function __construct(registered_video &$video, Client $client, file_system $filesystem, string $platform) {
+    public function __construct(registered_video &$video, Client $client, file_system $filesystem, string $platform, int $uploadcurltimeout) {
         parent::__construct($video);
         $this->client = $client;
         $this->filesystem = $filesystem;
         $this->platform = $platform;
+        $this->uploadcurltimeout = !empty($uploadcurltimeout) ? $uploadcurltimeout : 3600;
     }
 
     /**
@@ -119,13 +128,18 @@ class send_video extends video_transition {
 
         try {
             $response = $this->client->post('/publish/videos', array(
-              'file' => curl_file_create($videopath),
-              'info' => json_encode(array(
-                'title' => $videofile->get_filename(),
-                'date' => $videofile->get_timecreated() * 1000,
-                'platform' => $this->platform
-              ))
-            ));
+                'file' => curl_file_create($videopath),
+                'info' => json_encode(array(
+                    'title' => $videofile->get_filename(),
+                    'date' => $videofile->get_timecreated() * 1000,
+                    'platform' => $this->platform
+                  ))
+                ),
+                array(),
+                array(
+                    CURLOPT_TIMEOUT => $this->uploadcurltimeout
+                )
+            );
 
             return isset($response->id) ? $response->id : null;
         } catch(ClientException $e) {

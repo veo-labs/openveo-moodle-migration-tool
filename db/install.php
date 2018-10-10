@@ -449,4 +449,5 @@ function xmldb_tool_openveo_migration_install() {
     set_config('videotypestomigrate', '.mp4', 'tool_openveo_migration');
     set_config('statuspollingfrequency', 10, 'tool_openveo_migration');
     set_config('planningpagevideosnumber', 10, 'tool_openveo_migration');
+    set_config('uploadcurltimeout', 3600, 'tool_openveo_migration');
 }

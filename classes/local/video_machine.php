@@ -97,10 +97,11 @@ class video_machine extends machine {
      * @param array $filefields An associative array describing the Moodle file fields with component/filearea as key and an
      * associative array as values containing information about the field (component, filearea, supportedmethods)
      * @param int $openveorepositoryid The id of the OpenVeo Repository instance to associate the new video to
+     * @param int $uploadcurltimeout The cURL upload timeout in seconds
      */
     public function __construct(registered_video &$originalvideo, Client $client, videos_provider $videosprovider,
                                 file_storage $filestorage, file_system $filesystem, string $platform, int $statuspollingfrequency,
-                                array $filefields, int $openveorepositoryid) {
+                                array $filefields, int $openveorepositoryid, int $uploadcurltimeout) {
         $this->originalvideo = $originalvideo;
         $this->state = $originalvideo->get_state();
         $this->rollback = false;
@@ -116,7 +117,7 @@ class video_machine extends machine {
             array(
                 'from' => states::INITIALIZED,
                 'to' => states::SENT,
-                'transition' => new send_video($this->originalvideo, $client, $filesystem, $platform)
+                'transition' => new send_video($this->originalvideo, $client, $filesystem, $platform, $uploadcurltimeout)
             ),
             array(
                 'from' => states::SENT,

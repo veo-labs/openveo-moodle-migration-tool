@@ -55,6 +55,10 @@ $string['settingsplanningpagevideosnumberlabel'] = 'Planning page: max videos pe
 $string['settingsplanningpagevideosnumber'] = 'Planning page: max videos per page';
 $string['settingsplanningpagevideosnumber_help'] = 'The number of videos to display per page of results in the planning page.';
 $string['settingsplanningpagevideosnumberformaterror'] = 'Invalid number of videos (e.g. 10)';
+$string['settingsuploadcurltimeoutlabel'] = 'Upload timeout (in seconds)';
+$string['settingsuploadcurltimeout'] = 'Upload timeout (in seconds)';
+$string['settingsuploadcurltimeout_help'] = 'The number of seconds before stopping the upload of a video to OpenVeo.';
+$string['settingsuploadcurltimeoutformaterror'] = 'Invalid timeout (e.g. 500)';
 $string['settingsfilefieldslabel'] = 'File fields';
 $string['settingsfilefields'] = 'File fields';
 $string['settingsfilefields_help'] = 'The list of fields of type "editor" and "filemanager" used to upload files. If a reference to an OpenVeo video is added from a field not defined in here, OpenVeo Migration Tool won\'t migrate it. Each line represents a field with three columns: the component holding the field (component), the file area (filearea) and the supported methods (supportedmethods). Columns are separated by pipes. More information available on <a href="https://github.com/veo-labs/openveo-moodle-migration-tool" target="_blank">plugin\'s page</a>. Not that the order of lines is important as it determines the priority of automatic migration. Videos corresponding to the first field (first line) will be migrated before videos corresponding to the second field (second line) and son on.';

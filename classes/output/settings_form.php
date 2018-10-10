@@ -157,6 +157,33 @@ class settings_form extends moodleform {
             $this->_form->setDefault('planningpagevideosnumber', $this->_customdata['planningpagevideosnumber']);
         }
 
+        // cURL timeout when uploading videos to OpenVeo.
+        // PARAM_RAW is used instead of PARAM_INT because PARAM_INT does not allow field with no value, it keeps setting the
+        // value to 0. Consequently field validation is made using a regular expression. It validates that the value corresponds
+        // to a positive number greater than 0.
+        $this->_form->addElement(
+                'text',
+                'uploadcurltimeout',
+                get_string('settingsuploadcurltimeoutlabel', 'tool_openveo_migration'),
+                array('size' => 4)
+        );
+        $this->_form->setType('uploadcurltimeout', PARAM_RAW);
+        $this->_form->addHelpButton(
+                'uploadcurltimeout',
+                'settingsuploadcurltimeout',
+                'tool_openveo_migration'
+        );
+        $this->_form->addRule(
+                'uploadcurltimeout',
+                get_string('settingsuploadcurltimeoutformaterror', 'tool_openveo_migration'),
+                'regex',
+                '/^[1-9]{1}[0-9]*$/',
+                'client'
+        );
+        if (!empty($this->_customdata['uploadcurltimeout'])) {
+            $this->_form->setDefault('uploadcurltimeout', $this->_customdata['uploadcurltimeout']);
+        }
+
         // File fields.
         $this->_form->addElement(
                 'textarea',

@@ -55,6 +55,10 @@ $string['settingsplanningpagevideosnumberlabel'] = 'Planification : Nombre maxim
 $string['settingsplanningpagevideosnumber'] = 'Planification : Nombre maximum de vidéos par page';
 $string['settingsplanningpagevideosnumber_help'] = 'Le nombre de vidéos à afficher par page de résultats sur la page de planification.';
 $string['settingsplanningpagevideosnumberformaterror'] = 'Nombre de vidéos invalide (ex : 10)';
+$string['settingsuploadcurltimeoutlabel'] = 'Limite de chargement (en secondes)';
+$string['settingsuploadcurltimeout'] = 'Limite de chargement (en secondes)';
+$string['settingsuploadcurltimeout_help'] = 'Le nombre de secondes avant d\'arrêter le chargement d\'une vidéo sur OpenVeo.';
+$string['settingsuploadcurltimeoutformaterror'] = 'Limite invalide (ex : 500)';
 $string['settingsfilefieldslabel'] = 'Champs d\'ajout de fichiers';
 $string['settingsfilefields'] = 'Champs d\'ajout de fichiers';
 $string['settingsfilefields_help'] = 'La liste des champs de formulaire de type "editor" et "filemanager" permettant d\'ajouter des fichiers. Si une réfèrence vers une vidéo OpenVeo est ajoutée à partir d\'un champ de formulaire sans que le champ ne soit défini ici, OpenVeo Migration Tool ne migrera pas la vidéo. Chaque ligne représente un champ avec trois colonnes : le composant propriétaire du champ (component), la zone du fichier (filearea) et les méthodes supportées (supportedmethods). Les colonnes sont séparées par des barres verticales (pipe). Plus d\'informations disponibles sur <a href="https://github.com/veo-labs/openveo-moodle-migration-tool" target="_blank">la page du plugin</a>. L\'ordre des lignes est également important puisqu\'il détermine l\'ordre de la migration automatique. Les vidéos correspondant au premier champ (première ligne) seront migrées avant les vidéos correspondant au deuxième champ (seconde ligne) et ainsi de suite.';

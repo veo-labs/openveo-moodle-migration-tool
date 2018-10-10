@@ -102,6 +102,7 @@ class migrate extends scheduled_task {
         $automaticmigrationactivated = get_config('tool_openveo_migration', 'automaticmigrationactivated');
         $destinationplatform = get_config('tool_openveo_migration', 'destinationplatform');
         $statuspollingfrequency = get_config('tool_openveo_migration', 'statuspollingfrequency');
+        $uploadcurltimeout = get_config('tool_openveo_migration', 'uploadcurltimeout');
 
         // Validate configuration. At least one type of videos and a destination platform are needed to start the migration.
         $videotypestomigrate = $filetypesutil->normalize_file_types($videotypestomigrate);
@@ -158,7 +159,8 @@ class migrate extends scheduled_task {
                     $destinationplatform,
                     $statuspollingfrequency,
                     $filefields,
-                    $openveorepositoryid
+                    $openveorepositoryid,
+                    $uploadcurltimeout
                 );
                 if (!$machine->execute()) {
                     $this->send_video_migration_failed_event($videoid, $video->get_filename());

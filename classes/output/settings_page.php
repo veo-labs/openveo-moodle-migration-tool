@@ -92,6 +92,7 @@ class settings_page implements renderable, templatable {
         $defaultdestinationplatform = get_config('tool_openveo_migration', 'destinationplatform');
         $defaultstatuspollingfrequency = get_config('tool_openveo_migration', 'statuspollingfrequency');
         $defaultplanningpagevideosnumber = get_config('tool_openveo_migration', 'planningpagevideosnumber');
+        $defaultuploadcurltimeout = get_config('tool_openveo_migration', 'uploadcurltimeout');
         $defaultfilefields = get_config('tool_openveo_migration', 'filefields');
         $filetypesutil = new filetypes_util();
 
@@ -131,6 +132,7 @@ class settings_page implements renderable, templatable {
             ),
             'statuspollingfrequency' => $defaultstatuspollingfrequency,
             'planningpagevideosnumber' => $defaultplanningpagevideosnumber,
+            'uploadcurltimeout' => $defaultuploadcurltimeout,
             'filefields' => $defaultfilefields
         );
         $this->form = new settings_form(null, $defaults);
@@ -154,6 +156,7 @@ class settings_page implements renderable, templatable {
             set_config('statuspollingfrequency', $statuspollingfrequency, 'tool_openveo_migration');
             set_config('filefields', $data->filefields, 'tool_openveo_migration');
             set_config('planningpagevideosnumber', $data->planningpagevideosnumber, 'tool_openveo_migration');
+            set_config('uploadcurltimeout', $data->uploadcurltimeout, 'tool_openveo_migration');
 
         }
     }
