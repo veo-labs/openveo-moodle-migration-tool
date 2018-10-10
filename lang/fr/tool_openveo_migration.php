@@ -105,8 +105,8 @@ $string['planningtablestatus6'] = 'Non supportée';
 
 // Errors.
 $string['errorlocalpluginnotconfigured'] = 'Le plugin local "OpenVeo API" n\'est pas configuré.';
-$string['errornovideoplatform'] = 'Aucune platforme vidéos de configurée sur OpenVeo Publish.';
-$string['errormigrationwrongconfiguration'] = 'La migration nécessite au moins un type de vidéos et une platforme de destination.';
+$string['errornovideoplatform'] = 'Aucune plateforme vidéos n\'est configurée sur OpenVeo Publish.';
+$string['errormigrationwrongconfiguration'] = 'La migration nécessite au moins un type de vidéos et une plateforme de destination.';
 $string['errornorepositoryopenveo'] = 'Aucun dépôt OpenVeo trouvé.';
 $string['errorgettingvideos'] = 'La recherche de vidéos a échoué (cf. logs pour plus d\'information).';
 $string['errorpreparingvideos'] = 'La recherche de vidéos a échoué (cf. logs pour plus d\'information).';
