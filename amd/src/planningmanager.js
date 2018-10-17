@@ -62,7 +62,7 @@ define(['jquery'], function($) {
         var actionDisabled = actionJqueryElement.find('option[value=' + selectedAction + ']').prop('disabled') !== false;
         var chooseActionSelected = selectedAction === '0';
 
-        submitJqueryElement.prop('disabled', actionDisabled || !selectedVideosNumber || chooseActionSelected);
+        submitJqueryElement.prop('disabled', actionDisabled || !selectedVideosNumber || chooseActionSelected);
     }
 
     /**
