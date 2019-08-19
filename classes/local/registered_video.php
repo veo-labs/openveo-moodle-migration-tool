@@ -26,6 +26,7 @@ namespace tool_openveo_migration\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+use stdClass;
 use stored_file;
 
 /**
@@ -99,6 +100,13 @@ class registered_video {
     protected $mimetype;
 
     /**
+     * The original video owner.
+     *
+     * @var stdClass
+     */
+    protected $owner;
+
+    /**
      * The list of Moodle reference files, pointing to the OpenVeo video, as stored_file instances.
      *
      * @var array
@@ -130,10 +138,11 @@ class registered_video {
      * @param array $contextids The ids of contexts where video is used or was used
      * @param int $timecreated The UNIX timestamp corresponding to migrated file creation
      * @param string $mimetype The MIME type of the migrated video
+     * @param stdClass $owner The original file owner
      */
     public function __construct(stored_file $file = null, int $id = null, int $status = null, int $state = null,
                                 string $filename = null, array $contextids = null, int $timecreated = null,
-                                string $mimetype = null) {
+                                string $mimetype = null, stdClass $owner = null) {
         $this->file = $file;
         $this->id = $id;
         $this->status = $status;
@@ -142,6 +151,7 @@ class registered_video {
         $this->contextids = $contextids;
         $this->timecreated = $timecreated;
         $this->mimetype = $mimetype;
+        $this->owner = $owner;
     }
 
     /**
@@ -232,6 +242,15 @@ class registered_video {
      */
     public function get_mimetype() {
         return $this->mimetype;
+    }
+
+    /**
+     * Gets file owner.
+     *
+     * @return stdClass The file owner
+     */
+    public function get_owner() {
+        return $this->owner;
     }
 
     /**

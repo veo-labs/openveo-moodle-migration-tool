@@ -101,6 +101,17 @@ class videos_provider {
     }
 
     /**
+     * Gets video owner information.
+     *
+     * @param stored_file $video The original video
+     * @return stdClass The video owner
+     * @throws dml_exception A DML specific exception is thrown for any errors
+     */
+    public function get_video_owner(stored_file $video) : stdClass {
+        return $this->database->get_record('user', ['id' => $video->get_userid()]);
+    }
+
+    /**
      * Gets a registered video by its migration status.
      *
      * The first video found in tool_openveo_migration table, with the expected status, will be returned.
@@ -124,6 +135,7 @@ class videos_provider {
         // Get all information about the associated Moodle file.
         $registeredvideo = current($videos);
         $video = $this->filestorage->get_file_by_id($registeredvideo->filesid);
+        $owner = $this->get_video_owner($video);
 
         return new registered_video(
                 $video,
@@ -133,7 +145,8 @@ class videos_provider {
                 $registeredvideo->filename,
                 explode(',', $registeredvideo->contextids),
                 $registeredvideo->timecreated,
-                $registeredvideo->mimetype
+                $registeredvideo->mimetype,
+                $owner
         );
 
     }
@@ -335,6 +348,7 @@ class videos_provider {
      */
     public function plan_video(stored_file $video) : registered_video {
         $contextids = $this->get_video_contexts($video);
+        $owner = $this->get_video_owner($video);
 
         $record = new stdClass();
         $record->filesid = $video->get_id();
@@ -355,7 +369,8 @@ class videos_provider {
                 $record->filename,
                 $contextids,
                 $record->timecreated,
-                $record->mimetype
+                $record->mimetype,
+                $owner
         );
     }
 

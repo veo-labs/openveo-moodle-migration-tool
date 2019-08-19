@@ -125,15 +125,24 @@ class send_video extends video_transition {
      */
     protected function send_video(string $videopath) {
         $videofile = $this->originalvideo->get_file();
+        $videoowner = $this->originalvideo->get_owner();
 
         try {
+            $response = $this->client->get("/users?email={$videoowner->email}");
+
+            $info = array(
+                'title' => $videofile->get_filename(),
+                'date' => $videofile->get_timecreated() * 1000,
+                'platform' => $this->platform
+            );
+
+            if (sizeof($response->entities) > 0) {
+                $info['user'] = $response->entities[0]->id;
+            }
+
             $response = $this->client->post('/publish/videos', array(
-                'file' => curl_file_create($videopath),
-                'info' => json_encode(array(
-                    'title' => $videofile->get_filename(),
-                    'date' => $videofile->get_timecreated() * 1000,
-                    'platform' => $this->platform
-                  ))
+                  'file' => curl_file_create($videopath),
+                  'info' => json_encode($info)
                 ),
                 array(),
                 array(
