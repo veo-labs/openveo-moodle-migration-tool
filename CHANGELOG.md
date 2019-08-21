@@ -4,11 +4,12 @@
 
 - Drop support for OpenVeo Core &lt; 8.2.0
 - Drop support for OpenVeo Publish &lt; 10.2.0
-- OpenVeo web service client for Moodle now requires "Get users" scope
+- OpenVeo web service client for Moodle now requires "Get users" and "Get groups" scopes
 
 ## NEW FEATURES
 
 - Automatically assign the migrated video to the OpenVeo user with the same email address as the Moodle user holding the file
+- Automatically assign the migrated video to the OpenVeo group specified in settings page
 - New configuration is available to be able to change the format of migrated video names on OpenVeo. Several tokens are available to help customize the names format from contextual information retrieved at the time of migration
 - A description has been added to migrated videos on OpenVeo containing information about where the original video and its aliases appeared at the time of migration
 

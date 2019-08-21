@@ -41,6 +41,7 @@ use Openveo\Client\Client;
 use Openveo\Exception\ClientException;
 use local_openveo_api\event\requesting_openveo_failed;
 use tool_openveo_migration\event\getting_platforms_failed;
+use tool_openveo_migration\event\getting_groups_failed;
 
 /**
  * Defines the settings page.
@@ -90,6 +91,7 @@ class settings_page implements renderable, templatable {
         $defaultvideotypestomigrate = get_config('tool_openveo_migration', 'videotypestomigrate');
         $defaultautomaticmigrationactivated = get_config('tool_openveo_migration', 'automaticmigrationactivated');
         $defaultdestinationplatform = get_config('tool_openveo_migration', 'destinationplatform');
+        $defaultdestinationgroup = get_config('tool_openveo_migration', 'destinationgroup');
         $defaultmigratedcoursevideonameformat = get_config('tool_openveo_migration', 'migratedcoursevideonameformat');
         $defaultmigratedmodulevideonameformat = get_config('tool_openveo_migration', 'migratedmodulevideonameformat');
         $defaultmigratedcategoryvideonameformat = get_config('tool_openveo_migration', 'migratedcategoryvideonameformat');
@@ -110,7 +112,9 @@ class settings_page implements renderable, templatable {
 
         // Build destinationplaform options.
         $platforms = $this->get_openveo_platforms();
+        $groups = $this->get_openveo_groups();
         $destinationplatforms = array();
+        $destinationgroups = array();
 
         if (sizeof($platforms) <= 0) {
 
@@ -127,6 +131,10 @@ class settings_page implements renderable, templatable {
             );
         }
 
+        foreach ($groups as $group) {
+            $destinationgroups[$group->id] = $group->name;
+        }
+
         // Create settings form.
         $defaults = array(
             'videotypestomigrate' => $defaultvideotypestomigrate,
@@ -134,6 +142,10 @@ class settings_page implements renderable, templatable {
             'destinationplatform' => array(
                 'value' => $defaultdestinationplatform,
                 'options' => $destinationplatforms
+            ),
+            'destinationgroup' => array(
+                'value' => $defaultdestinationgroup,
+                'options' => $destinationgroups
             ),
             'migratedcoursevideonameformat' => $defaultmigratedcoursevideonameformat,
             'migratedmodulevideonameformat' => $defaultmigratedmodulevideonameformat,
@@ -158,11 +170,13 @@ class settings_page implements renderable, templatable {
             $videotypestomigrate = implode(' ', $videotypestomigrate);
             $statuspollingfrequency = !empty($data->statuspollingfrequency) ? $data->statuspollingfrequency : null;
             $automaticmigrationactivated = isset($data->automaticmigrationactivated) ? $data->automaticmigrationactivated : false;
+            $destinationgroup = (!empty($data->destinationgroup) && $data->destinationgroup !== '0') ? $data->destinationgroup : null;
 
             // Save configuration to database.
             set_config('videotypestomigrate', $videotypestomigrate, 'tool_openveo_migration');
             set_config('automaticmigrationactivated', $automaticmigrationactivated, 'tool_openveo_migration');
             set_config('destinationplatform', $data->destinationplatform, 'tool_openveo_migration');
+            set_config('destinationgroup', $destinationgroup, 'tool_openveo_migration');
             set_config('migratedcoursevideonameformat', $data->migratedcoursevideonameformat, 'tool_openveo_migration');
             set_config('migratedmodulevideonameformat', $data->migratedmodulevideonameformat, 'tool_openveo_migration');
             set_config('migratedcategoryvideonameformat', $data->migratedcategoryvideonameformat, 'tool_openveo_migration');
@@ -208,6 +222,23 @@ class settings_page implements renderable, templatable {
     }
 
     /**
+     * Interrogates OpenVeo to get the list of groups.
+     *
+     * @return array The list of configured video groups in OpenVeo
+     */
+    protected function get_openveo_groups() : array {
+        try {
+            $response = $this->client->get('groups');
+            return isset($response->entities) ? $response->entities : array();
+        } catch(ClientException $e) {
+            $this->send_getting_groups_failed_event($e->getMessage());
+        } catch(Exception $e) {
+            $this->send_requesting_openveo_failed_event($e->getMessage());
+        }
+        return array();
+    }
+
+    /**
      * Sends a "requesting_openveo_failed" event.
      *
      * @param string $message The error message
@@ -229,6 +260,21 @@ class settings_page implements renderable, templatable {
      */
     protected function send_getting_platforms_failed_event(string $message) {
         $event = getting_platforms_failed::create(array(
+            'context' => context_system::instance(),
+            'other' => array(
+                'message' => $message
+            )
+        ));
+        $event->trigger();
+    }
+
+    /**
+     * Sends a "getting_groups_failed" event.
+     *
+     * @param string $message The error message
+     */
+    protected function send_getting_groups_failed_event(string $message) {
+        $event = getting_groups_failed::create(array(
             'context' => context_system::instance(),
             'other' => array(
                 'message' => $message

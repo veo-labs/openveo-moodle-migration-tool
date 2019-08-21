@@ -101,6 +101,7 @@ class migrate extends scheduled_task {
         $videotypestomigrate = get_config('tool_openveo_migration', 'videotypestomigrate');
         $automaticmigrationactivated = get_config('tool_openveo_migration', 'automaticmigrationactivated');
         $destinationplatform = get_config('tool_openveo_migration', 'destinationplatform');
+        $destinationgroup = get_config('tool_openveo_migration', 'destinationgroup');
         $migratedcoursevideonameformat = get_config('tool_openveo_migration', 'migratedcoursevideonameformat');
         $migratedmodulevideonameformat = get_config('tool_openveo_migration', 'migratedmodulevideonameformat');
         $migratedcategoryvideonameformat = get_config('tool_openveo_migration', 'migratedcategoryvideonameformat');
@@ -162,6 +163,7 @@ class migrate extends scheduled_task {
                     $filestorage,
                     $filesystem,
                     $destinationplatform,
+                    $destinationgroup,
                     array(
                         'course' => $migratedcoursevideonameformat,
                         'module' => $migratedmodulevideonameformat,

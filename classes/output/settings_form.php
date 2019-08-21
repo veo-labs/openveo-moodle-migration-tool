@@ -103,6 +103,26 @@ class settings_form extends moodleform {
             $this->_form->setDefault('destinationplatform', $this->_customdata['destinationplatform']['value']);
         }
 
+        // Destination group.
+        array_unshift($this->_customdata['destinationgroup']['options'], get_string(
+                "settingsdestinationgroupchoose",
+                'tool_openveo_migration'
+        ));
+        $this->_form->addElement(
+                'select',
+                'destinationgroup',
+                get_string('settingsdestinationgrouplabel', 'tool_openveo_migration'),
+                $this->_customdata['destinationgroup']['options']
+        );
+        $this->_form->addHelpButton(
+                'destinationgroup',
+                'settingsdestinationgroup',
+                'tool_openveo_migration'
+        );
+        if (!empty($this->_customdata['destinationgroup']['value'])) {
+            $this->_form->setDefault('destinationgroup', $this->_customdata['destinationgroup']['value']);
+        }
+
         // Migrated course video name format.
         $this->_form->addElement(
                 'text',

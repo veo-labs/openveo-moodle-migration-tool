@@ -92,6 +92,7 @@ class video_machine extends machine {
      * @param tool_openveo_migration\local\file_system $filesystem A file system capable of getting the absolute path of a Moodle
      * file (implementing get_local_path)
      * @param string $platform The videos platform to upload to (see OpenVeo Publish documentation)
+     * @param string $group The id of the content group to assign to migrated videos on OpenVeo
      * @param array $nameformats The formats to use to name videos on OpenVeo depending on the context
      * @param int $statuspollingfrequency The frequency of polling requests when waiting for OpenVeo to treat the uploaded video
      * (in seconds).
@@ -101,8 +102,9 @@ class video_machine extends machine {
      * @param int $uploadcurltimeout The cURL upload timeout in seconds
      */
     public function __construct(registered_video &$originalvideo, Client $client, videos_provider $videosprovider,
-                                file_storage $filestorage, file_system $filesystem, string $platform, array $nameformats,
-                                int $statuspollingfrequency, array $filefields, int $openveorepositoryid, int $uploadcurltimeout) {
+                                file_storage $filestorage, file_system $filesystem, string $platform, string $group,
+                                array $nameformats, int $statuspollingfrequency, array $filefields, int $openveorepositoryid,
+                                int $uploadcurltimeout) {
         $this->originalvideo = $originalvideo;
         $this->state = $originalvideo->get_state();
         $this->rollback = false;
@@ -119,7 +121,7 @@ class video_machine extends machine {
             array(
                 'from' => states::INITIALIZED,
                 'to' => states::SENT,
-                'transition' => new send_video($this->originalvideo, $client, $filesystem, $platform, $nameformats,
+                'transition' => new send_video($this->originalvideo, $client, $filesystem, $platform, $group, $nameformats,
                     $uploadcurltimeout, $this->videosprovider)
             ),
             array(

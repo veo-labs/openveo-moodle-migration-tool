@@ -47,6 +47,10 @@ $string['settingsdestinationplatformvimeo'] = 'Vimeo';
 $string['settingsdestinationplatformyoutube'] = 'Youtube';
 $string['settingsdestinationplatformtls'] = 'TLS';
 $string['settingsdestinationplatformwowza'] = 'Wowza';
+$string['settingsdestinationgrouplabel'] = 'Destinaton group';
+$string['settingsdestinationgroup'] = 'Destinaton group';
+$string['settingsdestinationgroup_help'] = 'Choose the destination group for videos to migrate.';
+$string['settingsdestinationgroupchoose'] = 'Choose...';
 $string['settingsmigratedcoursevideonameformatlabel'] = 'OpenVeo video name format for videos in a course context';
 $string['settingsmigratedcoursevideonameformat'] = 'OpenVeo video name format for course context videos';
 $string['settingsmigratedcoursevideonameformat_help'] = 'The format to use as video names on OpenVeo for videos in a course context. Available tokens are: <ul><li><strong>%filename%</strong>: The video file name</li><li><strong>%courseid%</strong>: The course ID</li><li><strong>%courseidnumber%</strong>: The course ID number</li><li><strong>%coursecategoryid%</strong>: The course category id</li><li><strong>%coursefullname%</strong>: The course full name</li><li><strong>%courseshortname%</strong>: The course short name</li></ul> (default is "%courseid% - %filename%")';
@@ -135,6 +139,7 @@ $string['errorderegisteringvideos'] = 'Deregistering videos from migration faile
 
 // Events.
 $string['eventgettingplatformsfailed'] = 'Getting video platforms failed';
+$string['eventgettinggroupsfailed'] = 'Getting groups failed';
 $string['eventvideomigrationstarted'] = 'Video migration started';
 $string['eventvideomigrationended'] = 'Video migration finished';
 $string['eventvideomigrationfailed'] = 'Video migration failed';

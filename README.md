@@ -14,7 +14,7 @@ OpenVeo Moodle Migration Tool is a Moodle Admin tools plugin which migrates vide
 - [OpenVeo Moodle Repository plugin](https://github.com/veo-labs/openveo-moodle-repository) >=1.0.0
 - Make sure OpenVeo Moodle API plugin is configured
 - Make sure OpenVeo Moodle Repository plugin is configured
-- OpenVeo web service client for Moodle must have scopes **Add video**, **Get video platforms**, **Publish videos**, **Delete videos** and **Get users**
+- OpenVeo web service client for Moodle must have scopes **Add video**, **Get video platforms**, **Publish videos**, **Delete videos**, **Get users** and **Get groups**
 - Moodle file system must be the default one, which means configuration variable **alternative_file_system_class** must not be used
 
 ## Installation

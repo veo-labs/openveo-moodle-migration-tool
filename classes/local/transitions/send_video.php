@@ -69,6 +69,13 @@ class send_video extends video_transition {
     protected $platform;
 
     /**
+     * The destination group.
+     *
+     * @var string
+     */
+    protected $group;
+
+    /**
      * The list of text templates to use to name OpenVeo videos.
      *
      * @var array
@@ -96,6 +103,7 @@ class send_video extends video_transition {
      * @param Openveo\Client\Client $client The OpenVeo web service client
      * @param tool_openveo_migration\local\file_system $filesystem The file system instance
      * @param string $platform The videos platform to upload to (see OpenVeo Publish documentation)
+     * @param string $group The id of the content group to assign to migrated videos on OpenVeo
      * @param array $nameformats The formats to use to name videos on OpenVeo depending on the videos contexts. It should be an
      * associative array with five keys: 'course', 'module', 'category', 'block' and 'user' with the desired format as values.
      * Formats may contains tokens which are available or not depending on the context:
@@ -116,11 +124,12 @@ class send_video extends video_transition {
      * @param videos_provider $videosprovider The videos provider
      */
     public function __construct(registered_video &$video, Client $client, file_system $filesystem, string $platform,
-            array $nameformats, int $uploadcurltimeout, videos_provider $videosprovider) {
+            string $group, array $nameformats, int $uploadcurltimeout, videos_provider $videosprovider) {
         parent::__construct($video);
         $this->client = $client;
         $this->filesystem = $filesystem;
         $this->platform = $platform;
+        $this->group = $group;
         $this->nameformats = $nameformats;
         $this->uploadcurltimeout = !empty($uploadcurltimeout) ? $uploadcurltimeout : 3600;
         $this->nameformats['course'] = !empty($this->nameformats['course']) ? $this->nameformats['course'] : '%courseid% - %filename%';
@@ -180,7 +189,8 @@ class send_video extends video_transition {
                 'title' => $videocontexts[0]->resolve_text($this->nameformats[$videocontexts[0]->type]),
                 'description' => $this->build_video_description($videocontexts),
                 'date' => $videofile->get_timecreated() * 1000,
-                'platform' => $this->platform
+                'platform' => $this->platform,
+                'groups' => array($this->group)
             );
 
             if (sizeof($response->entities) > 0) {

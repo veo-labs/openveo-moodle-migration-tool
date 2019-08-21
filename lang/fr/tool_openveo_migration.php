@@ -47,6 +47,10 @@ $string['settingsdestinationplatformyoutube'] = 'Youtube';
 $string['settingsdestinationplatformvimeo'] = 'Vimeo';
 $string['settingsdestinationplatformtls'] = 'TLS';
 $string['settingsdestinationplatformwowza'] = 'Wowza';
+$string['settingsdestinationgrouplabel'] = 'Groupe de contenus';
+$string['settingsdestinationgroup'] = 'Groupe de contenus';
+$string['settingsdestinationgroup_help'] = 'Choisissez un groupe de contenus pour les vidéos à migrer.';
+$string['settingsdestinationgroupchoose'] = 'Choisir...';
 $string['settingsmigratedcoursevideonameformatlabel'] = 'Format du nom des vidéos OpenVeo pour les vidéos dans un contexte de cours';
 $string['settingsmigratedcoursevideonameformat'] = 'Format du nom des vidéos OpenVeo pour les vidéos dans un contexte de cours';
 $string['settingsmigratedcoursevideonameformat_help'] = 'Le format à utiliser pour le nom des vidéos OpenVeo issues d\'un contexte de cours. Les jetons disponibles sont : <ul><li><strong>%filename%</strong>: Le nom du fichier vidéo</li><li><strong>%courseid%</strong> : L\'identifiant du cours</li><li><strong>%courseidnumber%</strong> : Le numéro d\'identification du cours</li><li><strong>%coursecategoryid%</strong> : L\'identifiant de la categorie à laquelle appartient le cours</li><li><strong>%coursefullname%</strong> : Le nom complet du cours</li><li><strong>%courseshortname%</strong> : Le nom abrégé du cours</li></ul> ("%courseid% - %filename%" par défaut)';
@@ -135,6 +139,7 @@ $string['errorderegisteringvideos'] = 'La déprogrammation des vidéos a échou�
 
 // Events.
 $string['eventgettingplatformsfailed'] = 'Récupération des plateformes vidéos echouée';
+$string['eventgettinggroupsfailed'] = 'Récupération des groupes echouée';
 $string['eventvideomigrationstarted'] = 'Migration vidéo démarrée';
 $string['eventvideomigrationended'] = 'Migration vidéo terminée';
 $string['eventvideomigrationfailed'] = 'Migration vidéo échouée';
