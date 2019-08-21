@@ -37,7 +37,7 @@ use tool_openveo_migration\event\creating_reference_failed;
  * Defines transition to create new references in Moodle, pointing to the OpenVeo video.
  *
  * This transition creates the new Moodle references pointing to the OpenVeo video. It also creates a new reference for all Moodle
- * alisaes which were pointing to the original video.
+ * aliases which were pointing to the original video.
  * Transition succeeds if new references have been successfully created for the original video and all its aliases.
  *
  * @package tool_openveo_migration
