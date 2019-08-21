@@ -117,10 +117,7 @@ class videos_provider {
      * The first video found in tool_openveo_migration table, with the expected status, will be returned.
      *
      * @param $status The migration status of the video
-     * @return stored_file The video with the following additional properties or null if not found
-     *     - **tommigrationid** The migration id
-     *     - **tomstatus** The migration status
-     *     - **tomstate** The migration state
+     * @return registered_video The registered video
      * @throws dml_exception A DML specific exception is thrown for any errors
      */
     public function get_registered_video_by_status(string $status) {
