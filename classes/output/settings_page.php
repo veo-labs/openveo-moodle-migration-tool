@@ -90,6 +90,11 @@ class settings_page implements renderable, templatable {
         $defaultvideotypestomigrate = get_config('tool_openveo_migration', 'videotypestomigrate');
         $defaultautomaticmigrationactivated = get_config('tool_openveo_migration', 'automaticmigrationactivated');
         $defaultdestinationplatform = get_config('tool_openveo_migration', 'destinationplatform');
+        $defaultmigratedcoursevideonameformat = get_config('tool_openveo_migration', 'migratedcoursevideonameformat');
+        $defaultmigratedmodulevideonameformat = get_config('tool_openveo_migration', 'migratedmodulevideonameformat');
+        $defaultmigratedcategoryvideonameformat = get_config('tool_openveo_migration', 'migratedcategoryvideonameformat');
+        $defaultmigratedblockvideonameformat = get_config('tool_openveo_migration', 'migratedblockvideonameformat');
+        $defaultmigrateduservideonameformat = get_config('tool_openveo_migration', 'migrateduservideonameformat');
         $defaultstatuspollingfrequency = get_config('tool_openveo_migration', 'statuspollingfrequency');
         $defaultplanningpagevideosnumber = get_config('tool_openveo_migration', 'planningpagevideosnumber');
         $defaultuploadcurltimeout = get_config('tool_openveo_migration', 'uploadcurltimeout');
@@ -130,6 +135,11 @@ class settings_page implements renderable, templatable {
                 'value' => $defaultdestinationplatform,
                 'options' => $destinationplatforms
             ),
+            'migratedcoursevideonameformat' => $defaultmigratedcoursevideonameformat,
+            'migratedmodulevideonameformat' => $defaultmigratedmodulevideonameformat,
+            'migratedcategoryvideonameformat' => $defaultmigratedcategoryvideonameformat,
+            'migratedblockvideonameformat' => $defaultmigratedblockvideonameformat,
+            'migrateduservideonameformat' => $defaultmigrateduservideonameformat,
             'statuspollingfrequency' => $defaultstatuspollingfrequency,
             'planningpagevideosnumber' => $defaultplanningpagevideosnumber,
             'uploadcurltimeout' => $defaultuploadcurltimeout,
@@ -153,6 +163,11 @@ class settings_page implements renderable, templatable {
             set_config('videotypestomigrate', $videotypestomigrate, 'tool_openveo_migration');
             set_config('automaticmigrationactivated', $automaticmigrationactivated, 'tool_openveo_migration');
             set_config('destinationplatform', $data->destinationplatform, 'tool_openveo_migration');
+            set_config('migratedcoursevideonameformat', $data->migratedcoursevideonameformat, 'tool_openveo_migration');
+            set_config('migratedmodulevideonameformat', $data->migratedmodulevideonameformat, 'tool_openveo_migration');
+            set_config('migratedcategoryvideonameformat', $data->migratedcategoryvideonameformat, 'tool_openveo_migration');
+            set_config('migratedblockvideonameformat', $data->migratedblockvideonameformat, 'tool_openveo_migration');
+            set_config('migrateduservideonameformat', $data->migrateduservideonameformat, 'tool_openveo_migration');
             set_config('statuspollingfrequency', $statuspollingfrequency, 'tool_openveo_migration');
             set_config('filefields', $data->filefields, 'tool_openveo_migration');
             set_config('planningpagevideosnumber', $data->planningpagevideosnumber, 'tool_openveo_migration');

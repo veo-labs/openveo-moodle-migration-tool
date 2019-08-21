@@ -30,10 +30,21 @@ use stdClass;
 use stored_file;
 use file_storage;
 use moodle_database;
+use context;
+use context_coursecat;
+use context_course;
+use context_module;
+use context_block;
+use context_user;
 use tool_openveo_migration\local\statuses;
 use tool_openveo_migration\local\states;
 use tool_openveo_migration\local\file_system;
 use tool_openveo_migration\local\registered_video;
+use tool_openveo_migration\local\contexts\course_video_context;
+use tool_openveo_migration\local\contexts\module_video_context;
+use tool_openveo_migration\local\contexts\category_video_context;
+use tool_openveo_migration\local\contexts\block_video_context;
+use tool_openveo_migration\local\contexts\user_video_context;
 
 /**
  * Defines a provider to manage Moodle video files and registered videos.
@@ -98,6 +109,103 @@ class videos_provider {
         }
 
         return $contextids;
+    }
+
+    /**
+     * Gets contexts for the registered video and its aliases.
+     *
+     * @param registered_video $video The registered video
+     * @return array The list of video contexts
+     * @throws dml_exception A DML specific exception is thrown for any errors
+     */
+    public function get_video_contexts(registered_video $video) : array {
+        $contexts = array();
+        $videofiles = $this->get_video_aliases($video->get_file());
+        $videofiles[] = $video->get_file();
+        $contextids = $video->get_contextids();
+
+        foreach ($contextids as $contextid) {
+
+            // Find video file reference corresponding to the context (either the original or an alias)
+            $videofile = array_reduce($videofiles, function($carry, $item) use ($contextid) {
+                if (!empty($carry) && $carry->get_contextid() === $contextid) {
+                    return $carry;
+                } else if ($item->get_contextid() === $contextid) {
+                    return $item;
+                }
+
+                return null;
+            });
+
+            if (empty($videofile)) {
+                continue;
+            }
+
+            $context = context::instance_by_id($contextid);
+            $videocontext;
+
+            if (empty($context)) {
+                continue;
+            }
+
+            if ($context instanceof context_course &&
+                $course = $this->database->get_record('course', array('id' => $context->instanceid))) {
+
+                // Video is part of a course context
+                $videocontext = new course_video_context($videofile, $context, $course);
+
+            } else if ($context instanceof context_module &&
+                $module = $this->database->get_record_sql("SELECT cm.*, md.name AS modulename
+                        FROM {course_modules} cm
+                        JOIN {modules} md ON md.id = cm.module
+                        WHERE cm.id = ?", array($context->instanceid))) {
+                if ($course = $this->database->get_record('course', array('id' => $module->course))) {
+
+                    // Video is part of a module context
+                    $videocontext = new module_video_context($videofile, $context, $course, $module->id , get_string('modulename', $module->modulename));
+
+                }
+            } else if ($context instanceof context_coursecat &&
+               $category = $this->database->get_record('course_categories', array('id' => $context->instanceid))) {
+
+               // Video is part of a category context
+               $videocontext = new category_video_context($videofile, $context, $category);
+
+            } else if ($context instanceof context_block &&
+                $block = $this->database->get_record('block_instances', array('id' => $context->instanceid))) {
+
+                // Video is part of a block context
+                $course;
+
+                if ($coursecontext = $context->get_course_context()) {
+
+                    // Block is associated to a course
+                    $course = $this->database->get_record('course', array('id' => $coursecontext->instanceid));
+
+                }
+
+                global $CFG;
+                require_once("$CFG->dirroot/blocks/moodleblock.class.php");
+                require_once("$CFG->dirroot/blocks/$block->blockname/block_$block->blockname.php");
+                $blockname = "block_$block->blockname";
+                if ($blockobject = new $blockname()) {
+                    $block->name = $blockobject->title;
+                    $videocontext = new block_video_context($videofile, $context, $block, $course);
+                }
+            } else if ($context instanceof context_user &&
+                $user = $this->database->get_record('user', array('id' => $context->instanceid, 'deleted' => 0))) {
+
+                // Video is part of a user context
+                $videocontext = new user_video_context($videofile, $context, $user);
+
+            } else {
+                die;
+                continue;
+            }
+            $contexts[] = $videocontext;
+        }
+
+        return $contexts;
     }
 
     /**

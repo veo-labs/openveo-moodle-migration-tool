@@ -101,6 +101,11 @@ class migrate extends scheduled_task {
         $videotypestomigrate = get_config('tool_openveo_migration', 'videotypestomigrate');
         $automaticmigrationactivated = get_config('tool_openveo_migration', 'automaticmigrationactivated');
         $destinationplatform = get_config('tool_openveo_migration', 'destinationplatform');
+        $migratedcoursevideonameformat = get_config('tool_openveo_migration', 'migratedcoursevideonameformat');
+        $migratedmodulevideonameformat = get_config('tool_openveo_migration', 'migratedmodulevideonameformat');
+        $migratedcategoryvideonameformat = get_config('tool_openveo_migration', 'migratedcategoryvideonameformat');
+        $migratedblockvideonameformat = get_config('tool_openveo_migration', 'migratedblockvideonameformat');
+        $migrateduservideonameformat = get_config('tool_openveo_migration', 'migrateduservideonameformat');
         $statuspollingfrequency = get_config('tool_openveo_migration', 'statuspollingfrequency');
         $uploadcurltimeout = get_config('tool_openveo_migration', 'uploadcurltimeout');
 
@@ -157,6 +162,13 @@ class migrate extends scheduled_task {
                     $filestorage,
                     $filesystem,
                     $destinationplatform,
+                    array(
+                        'course' => $migratedcoursevideonameformat,
+                        'module' => $migratedmodulevideonameformat,
+                        'category' => $migratedcategoryvideonameformat,
+                        'block' => $migratedblockvideonameformat,
+                        'user' => $migrateduservideonameformat
+                    ),
                     $statuspollingfrequency,
                     $filefields,
                     $openveorepositoryid,

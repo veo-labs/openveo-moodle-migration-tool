@@ -103,6 +103,106 @@ class settings_form extends moodleform {
             $this->_form->setDefault('destinationplatform', $this->_customdata['destinationplatform']['value']);
         }
 
+        // Migrated course video name format.
+        $this->_form->addElement(
+                'text',
+                'migratedcoursevideonameformat',
+                get_string('settingsmigratedcoursevideonameformatlabel', 'tool_openveo_migration'),
+                array('size' => 30)
+        );
+        $this->_form->setType('migratedcoursevideonameformat', PARAM_RAW_TRIMMED);
+        $this->_form->addHelpButton(
+                'migratedcoursevideonameformat',
+                'settingsmigratedcoursevideonameformat',
+                'tool_openveo_migration'
+        );
+        if (!empty($this->_customdata['migratedcoursevideonameformat'])) {
+            $this->_form->setDefault(
+                    'migratedcoursevideonameformat',
+                    $this->_customdata['migratedcoursevideonameformat']
+            );
+        }
+
+        // Migrated module video name format.
+        $this->_form->addElement(
+                'text',
+                'migratedmodulevideonameformat',
+                get_string('settingsmigratedmodulevideonameformatlabel', 'tool_openveo_migration'),
+                array('size' => 30)
+        );
+        $this->_form->setType('migratedmodulevideonameformat', PARAM_RAW_TRIMMED);
+        $this->_form->addHelpButton(
+                'migratedmodulevideonameformat',
+                'settingsmigratedmodulevideonameformat',
+                'tool_openveo_migration'
+        );
+        if (!empty($this->_customdata['migratedmodulevideonameformat'])) {
+            $this->_form->setDefault(
+                    'migratedmodulevideonameformat',
+                    $this->_customdata['migratedmodulevideonameformat']
+            );
+        }
+
+        // Migrated category video name format.
+        $this->_form->addElement(
+                'text',
+                'migratedcategoryvideonameformat',
+                get_string('settingsmigratedcategoryvideonameformatlabel', 'tool_openveo_migration'),
+                array('size' => 30)
+        );
+        $this->_form->setType('migratedcategoryvideonameformat', PARAM_RAW_TRIMMED);
+        $this->_form->addHelpButton(
+                'migratedcategoryvideonameformat',
+                'settingsmigratedcategoryvideonameformat',
+                'tool_openveo_migration'
+        );
+        if (!empty($this->_customdata['migratedcategoryvideonameformat'])) {
+            $this->_form->setDefault(
+                    'migratedcategoryvideonameformat',
+                    $this->_customdata['migratedcategoryvideonameformat']
+            );
+        }
+
+        // Migrated block video name format.
+        $this->_form->addElement(
+                'text',
+                'migratedblockvideonameformat',
+                get_string('settingsmigratedblockvideonameformatlabel', 'tool_openveo_migration'),
+                array('size' => 30)
+        );
+        $this->_form->setType('migratedblockvideonameformat', PARAM_RAW_TRIMMED);
+        $this->_form->addHelpButton(
+                'migratedblockvideonameformat',
+                'settingsmigratedblockvideonameformat',
+                'tool_openveo_migration'
+        );
+        if (!empty($this->_customdata['migratedblockvideonameformat'])) {
+            $this->_form->setDefault(
+                    'migratedblockvideonameformat',
+                    $this->_customdata['migratedblockvideonameformat']
+            );
+        }
+
+        // Migrated user video name format.
+        $this->_form->addElement(
+                'text',
+                'migrateduservideonameformat',
+                get_string('settingsmigrateduservideonameformatlabel', 'tool_openveo_migration'),
+                array('size' => 30)
+        );
+        $this->_form->setType('migrateduservideonameformat', PARAM_RAW_TRIMMED);
+        $this->_form->addHelpButton(
+                'migrateduservideonameformat',
+                'settingsmigrateduservideonameformat',
+                'tool_openveo_migration'
+        );
+        if (!empty($this->_customdata['migrateduservideonameformat'])) {
+            $this->_form->setDefault(
+                    'migrateduservideonameformat',
+                    $this->_customdata['migrateduservideonameformat']
+            );
+        }
+
         // Polling status frequency.
         // PARAM_RAW is used instead of PARAM_INT because PARAM_INT does not allow field with no value, it keeps setting the
         // value to 0. Consequently field validation is made using a regular expression. It validates that the value corresponds

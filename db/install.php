@@ -450,4 +450,9 @@ function xmldb_tool_openveo_migration_install() {
     set_config('statuspollingfrequency', 10, 'tool_openveo_migration');
     set_config('planningpagevideosnumber', 10, 'tool_openveo_migration');
     set_config('uploadcurltimeout', 3600, 'tool_openveo_migration');
+    set_config('migratedcoursevideonameformat', '%courseid% - %filename%', 'tool_openveo_migration');
+    set_config('migratedmodulevideonameformat', '%moduleid% - %filename%', 'tool_openveo_migration');
+    set_config('migratedcategoryvideonameformat', '%categoryid% - %filename%', 'tool_openveo_migration');
+    set_config('migratedblockvideonameformat', '%blockid% - %filename%', 'tool_openveo_migration');
+    set_config('migrateduservideonameformat', '%userid% - %filename%', 'tool_openveo_migration');
 }

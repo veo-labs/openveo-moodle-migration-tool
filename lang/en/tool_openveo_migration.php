@@ -47,6 +47,21 @@ $string['settingsdestinationplatformvimeo'] = 'Vimeo';
 $string['settingsdestinationplatformyoutube'] = 'Youtube';
 $string['settingsdestinationplatformtls'] = 'TLS';
 $string['settingsdestinationplatformwowza'] = 'Wowza';
+$string['settingsmigratedcoursevideonameformatlabel'] = 'OpenVeo video name format for videos in a course context';
+$string['settingsmigratedcoursevideonameformat'] = 'OpenVeo video name format for course context videos';
+$string['settingsmigratedcoursevideonameformat_help'] = 'The format to use as video names on OpenVeo for videos in a course context. Available tokens are: <ul><li><strong>%filename%</strong>: The video file name</li><li><strong>%courseid%</strong>: The course ID</li><li><strong>%courseidnumber%</strong>: The course ID number</li><li><strong>%coursecategoryid%</strong>: The course category id</li><li><strong>%coursefullname%</strong>: The course full name</li><li><strong>%courseshortname%</strong>: The course short name</li></ul> (default is "%courseid% - %filename%")';
+$string['settingsmigratedmodulevideonameformatlabel'] = 'OpenVeo video name format for videos in an activity / resource context';
+$string['settingsmigratedmodulevideonameformat'] = 'OpenVeo activity / resource video name format';
+$string['settingsmigratedmodulevideonameformat_help'] = 'The format to use as video names on OpenVeo for videos in an activity or resource context. Available tokens are: <ul><li><strong>%filename%</strong>: The video file name</li><li><strong>%moduleid%</strong>: The activity / resource ID</li><li><strong>%modulename%</strong>: The activity / resource name</li><li><strong>%courseid%</strong>: The course ID</li><li><strong>%courseidnumber%</strong>: The course ID number</li><li><strong>%coursecategoryid%</strong>: The course category id</li><li><strong>%coursefullname%</strong>: The course full name</li><li><strong>%courseshortname%</strong>: The course short name</li></ul> (default is "%moduleid% - %filename%")';
+$string['settingsmigratedcategoryvideonameformatlabel'] = 'OpenVeo video name format for videos in a category context';
+$string['settingsmigratedcategoryvideonameformat'] = 'OpenVeo video name format for videos in a category context';
+$string['settingsmigratedcategoryvideonameformat_help'] = 'The format to use as video names on OpenVeo for videos in a category context. Available tokens are: <ul><li><strong>%filename%</strong>: The video file name</li><li><strong>%categoryid%</strong>: The category ID</li><li><strong>%categoryidnumber%</strong>: The category ID number</li><li><strong>%categoryname%</strong>: The category name</li></ul> (default is "%categoryid% - %filename%")';
+$string['settingsmigratedblockvideonameformatlabel'] = 'OpenVeo video name format for videos in a block context';
+$string['settingsmigratedblockvideonameformat'] = 'OpenVeo video name format for videos in a block context';
+$string['settingsmigratedblockvideonameformat_help'] = 'The format to use as video names on OpenVeo for videos in a block context. Available tokens are: <ul><li><strong>%filename%</strong>: The video file name</li><li><strong>%blockid%</strong>: The block ID</li><li><strong>%blockname%</strong>: The block name</li></ul>The following tokens are available only for blocks associated to a course:<ul><li><strong>%courseid%</strong>: The course ID</li><li><strong>%courseidnumber%</strong>: The course ID number</li><li><strong>%coursecategoryid%</strong>: The course category id</li><li><strong>%coursefullname%</strong>: The course full name</li><li><strong>%courseshortname%</strong>: The course short name</li></ul> (default is "%blockid% - %filename%")';
+$string['settingsmigrateduservideonameformatlabel'] = 'OpenVeo video name format for videos in a user context';
+$string['settingsmigrateduservideonameformat'] = 'OpenVeo user video name format for videos in a user context';
+$string['settingsmigrateduservideonameformat_help'] = 'The format to use as video names on OpenVeo for videos in a user context. Available tokens are: <ul><li><strong>%filename%</strong>: The video file name</li><li><strong>%userid%</strong>: The user ID</li><li><strong>%username%</strong>: The user name</li><li><strong>%userfirstname%</strong>: The user first name</li><li><strong>%userlastname%</strong>: The user last name</li><li><strong>%useremail%</strong>: The user email</li></ul> (default is "%userid% - %filename%")';
 $string['settingsstatuspollingfrequencylabel'] = 'Status polling frequency (in seconds)';
 $string['settingsstatuspollingfrequency'] = 'Status polling frequency (in seconds)';
 $string['settingsstatuspollingfrequency_help'] = 'When migrating a Moodle video to OpenVeo, OpenVeo Migration Tool frequently asks OpenVeo about the video status until video has been completely treated. Default polling frequency is 10.';
@@ -151,3 +166,7 @@ $string['eventderegisteringvideosfailed'] = 'Deregistering videos failed';
 
 // Tasks.
 $string['taskmigratename'] = 'Migrate Moodle videos to OpenVeo';
+
+// OpenVeo.
+$string['openveooriginallabel'] = 'Original';
+$string['openveoaliaslabel'] = 'Alias';

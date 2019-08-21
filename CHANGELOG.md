@@ -9,6 +9,8 @@
 ## NEW FEATURES
 
 - Automatically assign the migrated video to the OpenVeo user with the same email address as the Moodle user holding the file
+- New configuration is available to be able to change the format of migrated video names on OpenVeo. Several tokens are available to help customize the names format from contextual information retrieved at the time of migration
+- A description has been added to migrated videos on OpenVeo containing information about where the original video and its aliases appeared at the time of migration
 
 # 1.0.1 / 2018-11-15
 
