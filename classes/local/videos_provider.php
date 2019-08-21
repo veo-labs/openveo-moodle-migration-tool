@@ -87,7 +87,7 @@ class videos_provider {
      * @return array The list of context ids
      * @throws dml_exception A DML specific exception is thrown for any errors
      */
-    public function get_video_contexts(stored_file $video) : array {
+    public function get_video_context_ids(stored_file $video) : array {
         $contextids = array();
 
         // Find where the video and its aliases are used.
@@ -313,7 +313,7 @@ class videos_provider {
                     $file = $this->filestorage->get_file_by_id($id);
 
                     // Find where the video and its aliases are used.
-                    $contextids = $this->get_video_contexts($file);
+                    $contextids = $this->get_video_context_ids($file);
 
                 } else if (isset($video->tomcontextids)) {
 
@@ -347,7 +347,7 @@ class videos_provider {
      * @throws dml_exception A DML specific exception is thrown for any errors
      */
     public function plan_video(stored_file $video) : registered_video {
-        $contextids = $this->get_video_contexts($video);
+        $contextids = $this->get_video_context_ids($video);
         $owner = $this->get_video_owner($video);
 
         $record = new stdClass();
@@ -391,7 +391,7 @@ class videos_provider {
             $record->status = statuses::PLANNED;
             $record->state = states::NOT_INITIALIZED;
             $record->filename = $video->get_filename();
-            $record->contextids = implode(',', $this->get_video_contexts($video));
+            $record->contextids = implode(',', $this->get_video_context_ids($video));
             $record->timecreated = $video->get_timecreated();
             $record->mimetype = $video->get_mimetype();
             $records[] = $record;
