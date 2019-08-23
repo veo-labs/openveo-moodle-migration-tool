@@ -72,7 +72,7 @@ abstract class machine {
     /**
      * Gets the transition from actual state to previous state.
      *
-     * @param transition The previous transition or null if no previous transition
+     * @return transition The previous transition or null if no previous transition
      */
     protected function get_previous_transition() {
         $previousstate = $this->get_previous_state();
@@ -93,7 +93,7 @@ abstract class machine {
     /**
      * Gets the transition from actual state to next state.
      *
-     * @param transition The next transition or null if no next transition
+     * @return transition The next transition or null if no next transition
      */
     protected function get_next_transition() {
         $nextstate = $this->get_next_state();
