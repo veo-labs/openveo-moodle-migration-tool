@@ -40,6 +40,7 @@ use tool_openveo_migration\local\statuses;
 use tool_openveo_migration\local\states;
 use tool_openveo_migration\local\file_system;
 use tool_openveo_migration\local\registered_video;
+use tool_openveo_migration\local\contexts\video_context;
 use tool_openveo_migration\local\contexts\course_video_context;
 use tool_openveo_migration\local\contexts\module_video_context;
 use tool_openveo_migration\local\contexts\category_video_context;
@@ -199,9 +200,9 @@ class videos_provider {
                 $videocontext = new user_video_context($videofile, $context, $user);
 
             } else {
-                die;
-                continue;
+                $videocontext = new video_context($videofile, $context);
             }
+
             $contexts[] = $videocontext;
         }
 

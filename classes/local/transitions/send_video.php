@@ -137,6 +137,7 @@ class send_video extends video_transition {
         $this->nameformats['category'] = !empty($this->nameformats['category']) ? $this->nameformats['category'] : '%categoryid% - %filename%';
         $this->nameformats['block'] = !empty($this->nameformats['block']) ? $this->nameformats['block'] : '%blockid% - %filename%';
         $this->nameformats['user'] = !empty($this->nameformats['user']) ? $this->nameformats['user'] : '%userid% - %filename%';
+        $this->nameformats['default'] = '%filename%';
         $this->videosprovider = $videosprovider;
     }
 

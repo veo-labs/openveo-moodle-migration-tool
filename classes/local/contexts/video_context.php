@@ -40,7 +40,7 @@ use stored_file;
  * @copyright 2019 Veo-labs
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class video_context {
+class video_context {
 
     /**
      * The video that belongs to the context (either the original or an alias).
@@ -71,9 +71,10 @@ abstract class video_context {
      * @param stored_file $video The video that belongs to this context (either the original or an alias)
      * @param context $moodlecontext The Moodle context
      */
-    protected function __construct(stored_file &$video, context &$moodlecontext) {
+    public function __construct(stored_file &$video, context &$moodlecontext) {
         $this->video = $video;
         $this->moodlecontext = $moodlecontext;
+        $this->type = 'default';
     }
 
     /**
