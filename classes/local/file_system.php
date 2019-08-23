@@ -33,7 +33,7 @@ use stored_file;
 use file_system_filedir;
 
 /**
- * Defines a specific file system to be able to get the file absolute paths.
+ * Defines a specific file system to be able to use protected file_system functions.
  *
  * Some methods of the core file_system are protected and can't be used from outside. This file_system intends to expose some of
  * this methods.
@@ -48,33 +48,14 @@ use file_system_filedir;
 class file_system extends file_system_filedir {
 
     /**
-     * Gets the absolute path of a file.
+     * Gets the absolute path of a file and recover file from trash if necessary.
      *
      * @param stored_file $file The file to look for
+     * @param bool $fetchifnotfound Whether to attempt to fetch from the trash path if not found
      * @return string The absolute path of the file
      */
-    public function get_local_path(stored_file $file) {
-        return $this->get_local_path_from_storedfile($file);
-    }
-
-    /**
-     * Recovers a file from trash.
-     *
-     * @param stored_file $file The file to look for
-     * @return bool true if it succeeds, false otherwise
-     */
-    public function restore_file(stored_file $file) {
-        return $this->recover_file($file);
-    }
-
-    /**
-     * Gets the path of a file in trash directory.
-     *
-     * @param stored_file $file The file in trash directory
-     * @return string The absolute path of the file in the trash directory
-     */
-    public function get_trash_file_path(stored_file $file) {
-        return $this->get_trash_fullpath_from_hash($file->get_contenthash());
+    public function get_local_path(stored_file $file, $fetchifnotfound = false) {
+        return $this->get_local_path_from_storedfile($file, $fetchifnotfound);
     }
 
 }

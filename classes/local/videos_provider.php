@@ -629,7 +629,12 @@ class videos_provider {
             'license' => $video->get_license(),
             'status' => $video->get_status()
         );
-        return $this->filestorage->create_file_from_pathname($filerecord, $this->filesystem->get_trash_file_path($video));
+
+        // get_local_path will automatically recover file from trash directory if not found in Moodle data
+        return $this->filestorage->create_file_from_pathname(
+                $filerecord,
+                $this->filesystem->get_local_path($video, true)
+        );
     }
 
     /**
