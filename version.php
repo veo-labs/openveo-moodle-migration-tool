@@ -25,10 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_openveo_migration';
-$plugin->version = 2018111500;
+$plugin->version = 2019082300;
 $plugin->requires = 2017111300;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.1';
+$plugin->release = '1.1.0';
 $plugin->dependencies = array(
     'local_openveo_api' => 2018101700,
     'repository_openveo' => 2018101700
